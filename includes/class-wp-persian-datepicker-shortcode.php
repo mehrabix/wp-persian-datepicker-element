@@ -72,6 +72,7 @@ class WP_Persian_Datepicker_Shortcode {
         // e.g. 'show-holidays' to 'show_holidays'
         $attributes = array();
         foreach ($atts as $key => $value) {
+            // Convert underscore to dash for HTML attribute
             $key_dash = str_replace('_', '-', $key);
             
             // Skip empty attributes
@@ -79,12 +80,19 @@ class WP_Persian_Datepicker_Shortcode {
                 continue;
             }
             
-            // Convert boolean values to string representation
+            // Handle boolean attributes properly for HTML5 custom elements
             if (is_bool($value)) {
-                $value = $value ? 'true' : 'false';
+                if ($value === true) {
+                    // For true values, just add the attribute without a value (HTML5 boolean attribute)
+                    $attributes[$key_dash] = true;
+                } else {
+                    // Skip false boolean attributes entirely
+                    continue;
+                }
+            } else {
+                // Regular attributes
+                $attributes[$key_dash] = $value;
             }
-            
-            $attributes[$key_dash] = $value;
         }
         
         // Special handling for class attribute
@@ -94,7 +102,13 @@ class WP_Persian_Datepicker_Shortcode {
         // Build HTML attributes string
         $attr_str = '';
         foreach ($attributes as $key => $value) {
-            $attr_str .= sprintf(' %s="%s"', esc_attr($key), esc_attr($value));
+            if ($value === true) {
+                // HTML5 boolean attribute (just the name, no value)
+                $attr_str .= ' ' . esc_attr($key);
+            } else {
+                // Regular attribute with value
+                $attr_str .= sprintf(' %s="%s"', esc_attr($key), esc_attr($value));
+            }
         }
         
         // اضافه کردن ویژگی مسیر فایل events.json
