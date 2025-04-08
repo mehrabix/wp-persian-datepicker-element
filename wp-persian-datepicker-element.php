@@ -416,6 +416,116 @@ class WP_Persian_Datepicker_Element {
                 update_option('wp_persian_datepicker_options', $existing_options);
             }
         }
+        
+        // Create or update the MO file for Persian translations
+        self::update_mo_file();
+    }
+    
+    /**
+     * Create or update the Persian language MO file.
+     */
+    private static function update_mo_file() {
+        // Define the PO and MO file paths
+        $langs_dir = plugin_dir_path(__FILE__) . 'languages/';
+        $po_file = $langs_dir . 'wp-persian-datepicker-element-fa_IR.po';
+        $mo_file = $langs_dir . 'wp-persian-datepicker-element-fa_IR.mo';
+        
+        // Create an empty MO file if PO file doesn't exist or can't be read
+        if (!file_exists($po_file) || !is_readable($po_file)) {
+            // Simple MO header with no translations
+            $mo_data = "\x95\x04\x12\xde"; // Magic number
+            $mo_data .= pack('V', 0); // Revision
+            $mo_data .= pack('V', 0); // Number of strings
+            $mo_data .= pack('V', 28); // Offset of original strings table
+            $mo_data .= pack('V', 28); // Offset of translated strings table
+            $mo_data .= pack('V', 0); // Size of hashing table
+            $mo_data .= pack('V', 28); // Offset of hashing table
+            
+            file_put_contents($mo_file, $mo_data);
+            return;
+        }
+        
+        // Hard-coded translations to include in the MO file
+        $translations = array(
+            'Persian Date Picker Settings' => 'تنظیمات انتخابگر تاریخ شمسی',
+            'Persian Date Picker' => 'انتخابگر تاریخ شمسی',
+            'General Settings' => 'تنظیمات عمومی',
+            'Default Placeholder' => 'متن راهنمای پیش‌فرض',
+            'Default Date Format' => 'قالب تاریخ پیش‌فرض',
+            'Show Holidays' => 'نمایش تعطیلات',
+            'Integration Guide' => 'راهنمای ادغام',
+            'Right-to-Left (RTL)' => 'راست به چپ (RTL)',
+            'Dark Mode' => 'حالت تاریک',
+            'Holiday Types' => 'انواع تعطیلات',
+            'Range Mode' => 'حالت انتخاب بازه',
+            'Settings' => 'تنظیمات',
+            'Shortcode Usage' => 'نحوه استفاده از شورت‌کد',
+            'Preview' => 'پیش‌نمایش',
+        );
+        
+        // Count the number of translations
+        $num_translations = count($translations);
+        
+        // Prepare the MO file data
+        $mo_data = "\x95\x04\x12\xde"; // Magic number (little endian)
+        $mo_data .= pack('V', 0); // Revision
+        $mo_data .= pack('V', $num_translations); // Number of strings
+        
+        // Calculate offsets
+        $header_size = 28; // 7 x 4 bytes
+        $o_offset = $header_size; // Original strings table offset
+        $t_offset = $header_size + 8 * $num_translations; // Translated strings table offset
+        
+        $mo_data .= pack('V', $o_offset); // Offset of original strings table
+        $mo_data .= pack('V', $t_offset); // Offset of translated strings table
+        $mo_data .= pack('V', 0); // Size of hashing table
+        $mo_data .= pack('V', 0); // Offset of hashing table
+        
+        // Prepare string tables
+        $o_table = ''; // Original strings table
+        $t_table = ''; // Translated strings table
+        $o_lengths = []; // Original string lengths
+        $t_lengths = []; // Translated string lengths
+        $o_offsets = []; // Original string offsets
+        $t_offsets = []; // Translated string offsets
+        
+        // Current offsets
+        $o_current_offset = 0;
+        $t_current_offset = 0;
+        
+        // Sort translations by original string
+        ksort($translations);
+        
+        // Build string tables
+        foreach ($translations as $original => $translated) {
+            // Original string
+            $o_lengths[] = strlen($original);
+            $o_offsets[] = $o_current_offset;
+            $o_table .= $original . "\0";
+            $o_current_offset += strlen($original) + 1; // +1 for null terminator
+            
+            // Translated string
+            $t_lengths[] = strlen($translated);
+            $t_offsets[] = $t_current_offset;
+            $t_table .= $translated . "\0";
+            $t_current_offset += strlen($translated) + 1; // +1 for null terminator
+        }
+        
+        // Build original strings index table
+        for ($i = 0; $i < $num_translations; $i++) {
+            $mo_data .= pack('VV', $o_lengths[$i], $o_offsets[$i]);
+        }
+        
+        // Build translated strings index table
+        for ($i = 0; $i < $num_translations; $i++) {
+            $mo_data .= pack('VV', $t_lengths[$i], $t_offsets[$i]);
+        }
+        
+        // Add string tables
+        $mo_data .= $o_table . $t_table;
+        
+        // Write the MO file
+        file_put_contents($mo_file, $mo_data);
     }
 
     /**

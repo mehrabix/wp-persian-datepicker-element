@@ -320,7 +320,7 @@ class WP_Persian_Datepicker_Admin {
             <div class="nav-tab-wrapper">
                 <a href="?page=wp-persian-datepicker-settings" class="nav-tab <?php echo (empty($_GET['tab']) || $_GET['tab'] === 'settings') ? 'nav-tab-active' : ''; ?>"><?php esc_html_e('Settings', 'wp-persian-datepicker-element'); ?></a>
                 <a href="?page=wp-persian-datepicker-settings&tab=shortcode" class="nav-tab <?php echo (isset($_GET['tab']) && $_GET['tab'] === 'shortcode') ? 'nav-tab-active' : ''; ?>"><?php esc_html_e('Shortcode Usage', 'wp-persian-datepicker-element'); ?></a>
-                <a href="?page=wp-persian-datepicker-settings&tab=integration" class="nav-tab <?php echo (isset($_GET['tab']) && $_GET['tab'] === 'integration') ? 'nav-tab-active' : ''; ?>"><?php esc_html_e('Integration Guide', 'wp-persian-datepicker-element'); ?></a>
+                <a href="?page=wp-persian-datepicker-settings&tab=integration" class="nav-tab <?php echo (isset($_GET['tab']) && $_GET['tab'] === 'integration') ? 'nav-tab-active' : ''; ?>"><?php echo (determine_locale() === 'fa_IR') ? 'راهنمای ادغام' : esc_html__('Integration Guide', 'wp-persian-datepicker-element'); ?></a>
             </div>
             
             <?php
@@ -457,6 +457,244 @@ class WP_Persian_Datepicker_Admin {
      * @since    1.0.0
      */
     private function display_integration_guide() {
+        // اگر زبان فارسی باشد، از نسخه فارسی استفاده می‌کنیم
+        if (determine_locale() === 'fa_IR') {
+            $this->display_integration_guide_fa();
+        } else {
+            $this->display_integration_guide_en();
+        }
+    }
+    
+    /**
+     * نمایش راهنمای ادغام به زبان فارسی
+     */
+    private function display_integration_guide_fa() {
+        ?>
+        <div class="wp-persian-datepicker-help">
+            <h2>راهنمای ادغام</h2>
+            
+            <h3>ادغام با فرم تماس 7 (Contact Form 7)</h3>
+            
+            <p>برای استفاده از انتخابگر تاریخ شمسی با افزونه فرم تماس 7، مراحل زیر را دنبال کنید:</p>
+            
+            <ol>
+                <li>یک فرم تماس 7 جدید ایجاد کنید یا فرم موجود را ویرایش کنید.</li>
+                <li>یک فیلد متنی در جایی که می‌خواهید از انتخابگر تاریخ استفاده کنید، اضافه نمایید.</li>
+                <li>مطمئن شوید که کلاس "persian-datepicker" را به فیلد اضافه کرده‌اید.</li>
+                <li>می‌توانید ویژگی‌های دیگری را نیز برای شخصی‌سازی انتخابگر تاریخ اضافه کنید.</li>
+            </ol>
+            
+            <div class="integration-example">
+                <h4>مثال فیلد در فرم تماس 7</h4>
+                <pre class="code-block">[text* birthday class:persian-datepicker data-placeholder="تاریخ تولد" data-format="YYYY/MM/DD" data-show-holidays="true" data-rtl="true"]</pre>
+            </div>
+            
+            <p>ویژگی‌های قابل دسترس برای ادغام با فرم تماس 7:</p>
+            
+            <table class="form-table">
+                <tr>
+                    <th scope="row">data-placeholder</th>
+                    <td>تنظیم متن راهنمای سفارشی</td>
+                </tr>
+                <tr>
+                    <th scope="row">data-format</th>
+                    <td>تنظیم قالب تاریخ (YYYY/MM/DD, YYYY-MM-DD و غیره)</td>
+                </tr>
+                <tr>
+                    <th scope="row">data-show-holidays</th>
+                    <td>نمایش تعطیلات در تقویم (true/false)</td>
+                </tr>
+                <tr>
+                    <th scope="row">data-rtl</th>
+                    <td>فعال‌سازی چیدمان راست به چپ (true/false)</td>
+                </tr>
+                <tr>
+                    <th scope="row">data-dark-mode</th>
+                    <td>فعال‌سازی حالت تاریک (true/false)</td>
+                </tr>
+                <tr>
+                    <th scope="row">data-holiday-types</th>
+                    <td>تنظیم انواع تعطیلات (جدا شده با کاما)</td>
+                </tr>
+                <tr>
+                    <th scope="row">data-range-mode</th>
+                    <td>فعال‌سازی حالت انتخاب بازه تاریخ (true/false)</td>
+                </tr>
+                <tr>
+                    <th scope="row">data-min-date</th>
+                    <td>تنظیم کمترین تاریخ قابل انتخاب</td>
+                </tr>
+                <tr>
+                    <th scope="row">data-max-date</th>
+                    <td>تنظیم بیشترین تاریخ قابل انتخاب</td>
+                </tr>
+            </table>
+            
+            <div class="integration-example">
+                <h4>مثال کامل فرم تماس 7</h4>
+                <pre class="code-block">[text* birthday class:persian-datepicker data-placeholder="تاریخ تولد" data-format="YYYY/MM/DD" data-show-holidays="true" data-rtl="true" data-holiday-types="Iran,International" data-min-date="1330/01/01" data-max-date="1402/12/29"]</pre>
+            </div>
+            
+            <h3>ادغام با دبلیوپی‌فرمز (WPForms)</h3>
+            
+            <p>برای استفاده از انتخابگر تاریخ شمسی با افزونه دبلیوپی‌فرمز، کد جاوااسکریپت زیر را به پوسته یا فایل جاوااسکریپت سفارشی خود اضافه کنید:</p>
+            
+            <pre class="code-block">jQuery(document).ready(function($) {
+    // اعمال انتخابگر تاریخ به فیلدهای متنی WPForms با کلاس 'persian-date'
+    $('.wpforms-field-text input.persian-date').each(function() {
+        var $input = $(this);
+        var $wrapper = $('<persian-datepicker-element></persian-datepicker-element>');
+        
+        // کپی کردن ویژگی‌ها از ورودی به انتخابگر تاریخ
+        if ($input.attr('placeholder')) {
+            $wrapper.attr('placeholder', $input.attr('placeholder'));
+        }
+        
+        // دریافت ویژگی‌های داده‌ای اضافی
+        if ($input.data('format')) {
+            $wrapper.attr('format', $input.data('format'));
+        }
+        
+        if ($input.data('show-holidays') !== undefined) {
+            $wrapper.attr('show-holidays', $input.data('show-holidays'));
+        }
+        
+        if ($input.data('rtl') !== undefined) {
+            $wrapper.attr('rtl', $input.data('rtl'));
+        }
+        
+        // قرار دادن انتخابگر تاریخ و اتصال تغییرات مقدار
+        $input.after($wrapper).hide();
+        
+        $wrapper[0].addEventListener('dateSelected', function(e) {
+            $input.val(e.detail.formattedDate).trigger('change');
+        });
+    });
+});</pre>
+            
+            <p>سپس کلاس "persian-date" را به هر فیلد متنی در فرم WPForms خود اضافه کنید.</p>
+            
+            <h3>ادغام با گراویتی فرمز (Gravity Forms)</h3>
+            
+            <p>برای استفاده از انتخابگر تاریخ شمسی با گراویتی فرمز، کد جاوااسکریپت مشابهی را مانند WPForms اضافه کنید، اما فیلدهای گراویتی فرمز را هدف قرار دهید:</p>
+            
+            <pre class="code-block">jQuery(document).ready(function($) {
+    // اعمال انتخابگر تاریخ به فیلدهای متنی Gravity Forms با کلاس 'persian-date'
+    $('.gfield input.persian-date').each(function() {
+        // پیاده‌سازی مشابه مثال WPForms بالا
+        var $input = $(this);
+        var $wrapper = $('<persian-datepicker-element></persian-datepicker-element>');
+        
+        // اعمال ویژگی‌ها و تنظیمات...
+        
+        $input.after($wrapper).hide();
+        
+        $wrapper[0].addEventListener('dateSelected', function(e) {
+            $input.val(e.detail.formattedDate).trigger('change');
+        });
+    });
+});</pre>
+            
+            <h3>ادغام با ووکامرس (WooCommerce)</h3>
+            
+            <p>انتخابگر تاریخ شمسی به صورت خودکار با فرم‌های ووکامرس ادغام می‌شود. کافیست کلاس «persian-date» را به فیلدهای مورد نظر خود اضافه کنید:</p>
+            
+            <pre class="code-block">// برای سفارشی‌سازی فیلدهای سفارش در ووکامرس، از فیلتر زیر استفاده کنید
+add_filter('woocommerce_checkout_fields', 'custom_woocommerce_checkout_fields');
+
+function custom_woocommerce_checkout_fields($fields) {
+    // اضافه کردن کلاس به فیلد تاریخ
+    if (isset($fields['order']['order_date'])) {
+        $fields['order']['order_date']['class'][] = 'persian-date';
+    }
+    
+    return $fields;
+}</pre>
+            
+            <h3>API جاوااسکریپت برای ادغام پیشرفته</h3>
+            
+            <p>برای شخصی‌سازی پیشرفته، می‌توانید مستقیماً از API جاوااسکریپت استفاده کنید:</p>
+            
+            <pre class="code-block">// ایجاد یک عنصر انتخابگر تاریخ
+const datepicker = document.createElement('persian-datepicker-element');
+
+// تنظیم ویژگی‌ها
+datepicker.setAttribute('placeholder', 'انتخاب تاریخ');
+datepicker.setAttribute('format', 'YYYY/MM/DD');
+datepicker.setAttribute('show-holidays', 'true');
+datepicker.setAttribute('rtl', 'true');
+
+// گوش دادن به رویداد انتخاب تاریخ
+datepicker.addEventListener('dateSelected', function(e) {
+    console.log('تاریخ انتخاب شده:', e.detail.formattedDate);
+    console.log('شیء تاریخ:', e.detail.date);
+});
+
+// افزودن به کانتینر
+document.querySelector('#datepicker-container').appendChild(datepicker);</pre>
+            
+            <h3>شخصی‌سازی CSS</h3>
+            
+            <p>می‌توانید ظاهر انتخابگر تاریخ را با متغیرهای CSS سفارشی کنید. این‌ها را به برگه استایل پوسته یا سفارشی‌ساز خود اضافه کنید:</p>
+            
+            <pre class="code-block">/* اعمال به همه انتخابگرهای تاریخ یا انتخابگرهای خاص با کلاس‌ها */
+persian-datepicker-element {
+    /* رنگ‌های اصلی */
+    --jdp-background: #ffffff;
+    --jdp-foreground: #333333;
+    
+    /* استایل ورودی */
+    --jdp-input-bg: #fafafa;
+    --jdp-input-border: #cccccc;
+    --jdp-input-padding: 8px 12px;
+    --jdp-input-border-radius: 4px;
+    
+    /* استایل تقویم */
+    --jdp-border-radius: 8px;
+    --jdp-border-color: #e0e0e0;
+    --jdp-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    
+    /* استایل روز انتخاب شده */
+    --jdp-selected-bg: #2271b1;
+    --jdp-selected-fg: #ffffff;
+    
+    /* استایل تعطیلات */
+    --jdp-holiday-color: #e53935;
+    
+    /* استایل امروز */
+    --jdp-today-border-color: #2271b1;
+    
+    /* عرض سفارشی */
+    width: 280px;
+}</pre>
+            
+            <h3>استفاده در قالب‌ها و کدهای سفارشی</h3>
+            
+            <p>می‌توانید از تابع کوتاه PHP زیر در قالب‌های سفارشی خود استفاده کنید:</p>
+            
+            <pre class="code-block">// در فایل PHP قالب خود
+if (function_exists('persian_datepicker_shortcode')) {
+    echo persian_datepicker_shortcode([
+        'placeholder' => 'تاریخ انتخاب کنید',
+        'format' => 'YYYY/MM/DD',
+        'show_holidays' => 'true',
+        'rtl' => 'true',
+        'holiday_types' => 'Iran,International'
+    ]);
+}</pre>
+            
+            <div class="integration-example">
+                <h4>نکته مهم</h4>
+                <p>برای بهترین عملکرد، همیشه اطمینان حاصل کنید که کلاس «persian-datepicker» را به فیلدهای متنی‌ای که می‌خواهید به انتخابگر تاریخ شمسی تبدیل شوند، اضافه کرده‌اید. این باعث می‌شود فرآیند تبدیل به طور خودکار انجام شود.</p>
+            </div>
+        </div>
+        <?php
+    }
+    
+    /**
+     * Display integration guide section in English.
+     */
+    private function display_integration_guide_en() {
         ?>
         <div class="wp-persian-datepicker-help">
             <h2><?php esc_html_e('Integration Guide', 'wp-persian-datepicker-element'); ?></h2>

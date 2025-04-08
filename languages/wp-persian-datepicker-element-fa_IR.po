@@ -22,6 +22,10 @@ msgstr "تنظیمات انتخابگر تاریخ شمسی"
 msgid "Persian Date Picker"
 msgstr "انتخابگر تاریخ شمسی"
 
+#: admin/class-wp-persian-datepicker-admin.php:271
+msgid "Integration Guide"
+msgstr "راهنمای ادغام"
+
 #: admin/class-wp-persian-datepicker-admin.php:35
 msgid "General Settings"
 msgstr "تنظیمات عمومی"
