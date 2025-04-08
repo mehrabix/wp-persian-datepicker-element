@@ -1,0 +1,63 @@
+WP Persian Datepicker Element - Installation Guide
+==============================================
+
+Thank you for downloading the WP Persian Datepicker Element plugin!
+
+To properly set up the plugin after downloading, please follow these steps:
+
+1. Make sure the plugin files are in a directory called 'wp-persian-datepicker-element'
+   inside your WordPress plugins directory (wp-content/plugins/).
+
+2. Copy the necessary files from the original component's dist folder:
+   - Copy persian-datepicker-element.min.js to assets/dist/
+   - If needed, copy any other necessary files from the dist/data folder
+
+3. Activate the plugin through the WordPress admin interface.
+
+4. Configure the default settings under Settings > Persian Date Picker.
+
+5. Start using the datepicker through shortcodes, widgets, or the Gutenberg block.
+
+Folder Structure:
+----------------
+wp-persian-datepicker-element/
+├── admin/
+│   ├── css/
+│   │   └── wp-persian-datepicker-admin.css
+│   ├── js/
+│   │   └── wp-persian-datepicker-admin.js
+│   └── class-wp-persian-datepicker-admin.php
+├── assets/
+│   ├── css/
+│   │   └── wp-persian-datepicker-element.css
+│   ├── dist/
+│   │   └── persian-datepicker-element.min.js (copy from original component)
+│   └── js/
+│       └── frontend/
+│           └── wp-integration.js
+├── includes/
+│   ├── class-wp-persian-datepicker-loader.php
+│   ├── class-wp-persian-datepicker-scripts.php
+│   ├── class-wp-persian-datepicker-shortcode.php
+│   └── class-wp-persian-datepicker-widget.php
+├── index.php
+├── README.txt
+└── wp-persian-datepicker-element.php
+
+Usage Examples:
+--------------
+1. Basic shortcode:
+   [persian_datepicker]
+
+2. Shortcode with custom attributes:
+   [persian_datepicker placeholder="تاریخ تولد" format="YYYY/MM/DD" show_holidays="true"]
+
+3. Widget:
+   Add the "Persian Date Picker" widget to any widget area through Appearance > Widgets.
+
+4. Gutenberg Block:
+   Search for "Persian Date Picker" in the block inserter.
+
+For more information and customization options, please see README.txt or visit our website.
+
+Need help? Contact us at support@example.com 

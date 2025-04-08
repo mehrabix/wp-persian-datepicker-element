@@ -1,0 +1,73 @@
+/**
+ * Admin CSS for WP Persian Datepicker Element
+ *
+ * @package    WP_Persian_Datepicker_Element
+ * @subpackage WP_Persian_Datepicker_Element/admin/css
+ */
+
+.persian-datepicker-preview {
+    background: #fff;
+    border: 1px solid #ddd;
+    padding: 20px;
+    max-width: 500px;
+    margin-top: 20px;
+    border-radius: 5px;
+}
+
+.wp-persian-datepicker-help {
+    margin-top: 20px;
+}
+
+.wp-persian-datepicker-help code {
+    display: inline-block;
+    background: #f1f1f1;
+    padding: 5px 10px;
+    border-radius: 3px;
+    border: 1px solid #ddd;
+    margin: 2px 0;
+    font-family: monospace;
+    direction: ltr;
+    text-align: left;
+}
+
+.wp-persian-datepicker-help .form-table th {
+    width: 180px;
+}
+
+.nav-tab-wrapper {
+    margin-bottom: 20px;
+}
+
+/* RTL Support for admin */
+.rtl .wp-persian-datepicker-help code {
+    direction: ltr;
+    text-align: left;
+    display: inline-block;
+}
+
+/* Dark Mode Support */
+.admin-color-midnight .persian-datepicker-preview,
+.admin-color-modern .persian-datepicker-preview,
+.admin-color-ocean .persian-datepicker-preview,
+.admin-color-coffee .persian-datepicker-preview,
+.admin-color-ectoplasm .persian-datepicker-preview,
+.admin-color-blue .persian-datepicker-preview,
+.admin-color-sunrise .persian-datepicker-preview {
+    background: #23282d;
+    border-color: #32373c;
+    color: #bbc8d4;
+}
+
+/* Default (Light) theme adjustments */
+.wp-persian-datepicker.wp-persian-datepicker {
+    min-width: 240px;
+    max-width: 100%;
+    --jdp-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+
+/* Responsive styles */
+@media screen and (max-width: 782px) {
+    .wp-persian-datepicker-help .form-table th {
+        width: auto;
+    }
+} 

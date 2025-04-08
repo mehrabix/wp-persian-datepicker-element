@@ -1,0 +1,191 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: WP Persian Datepicker Element 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wp-persian-datepicker-element\n"
+"POT-Creation-Date: 2024-01-01T12:00:00+00:00\n"
+"PO-Revision-Date: 2024-04-10T10:00:00+00:00\n"
+"Last-Translator: \n"
+"Language-Team: Persian\n"
+"Language: fa_IR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Manual\n"
+"X-Domain: wp-persian-datepicker-element\n"
+
+#: admin/class-wp-persian-datepicker-admin.php:18
+msgid "Persian Date Picker Settings"
+msgstr "تنظیمات انتخابگر تاریخ شمسی"
+
+#: admin/class-wp-persian-datepicker-admin.php:19
+msgid "Persian Date Picker"
+msgstr "انتخابگر تاریخ شمسی"
+
+#: admin/class-wp-persian-datepicker-admin.php:35
+msgid "General Settings"
+msgstr "تنظیمات عمومی"
+
+#: admin/class-wp-persian-datepicker-admin.php:43
+msgid "Default Placeholder"
+msgstr "متن راهنمای پیش‌فرض"
+
+#: admin/class-wp-persian-datepicker-admin.php:51
+msgid "Default Date Format"
+msgstr "قالب تاریخ پیش‌فرض"
+
+#: admin/class-wp-persian-datepicker-admin.php:59
+msgid "Show Holidays"
+msgstr "نمایش تعطیلات"
+
+#: admin/class-wp-persian-datepicker-admin.php:67
+msgid "Right-to-Left (RTL)"
+msgstr "راست به چپ (RTL)"
+
+#: admin/class-wp-persian-datepicker-admin.php:75
+msgid "Dark Mode"
+msgstr "حالت تاریک"
+
+#: admin/class-wp-persian-datepicker-admin.php:83
+msgid "Holiday Types"
+msgstr "انواع تعطیلات"
+
+#: admin/class-wp-persian-datepicker-admin.php:91
+msgid "Range Mode"
+msgstr "حالت انتخاب بازه"
+
+#: admin/class-wp-persian-datepicker-admin.php:113
+msgid "Configure the default settings for the Persian Date Picker component. These settings will be used as defaults for shortcodes and widgets unless overridden."
+msgstr "تنظیمات پیش‌فرض کامپوننت انتخابگر تاریخ شمسی را پیکربندی کنید. این تنظیمات به عنوان پیش‌فرض برای شورت‌کدها و ابزارک‌ها استفاده می‌شوند مگر اینکه بازنویسی شوند."
+
+#: admin/class-wp-persian-datepicker-admin.php:127
+msgid "The placeholder text to show in the input field."
+msgstr "متن راهنما که در فیلد ورودی نمایش داده می‌شود."
+
+#: admin/class-wp-persian-datepicker-admin.php:140
+msgid "The date format pattern (e.g. YYYY/MM/DD, YYYY-MM-DD)."
+msgstr "الگوی قالب تاریخ (مثلاً YYYY/MM/DD, YYYY-MM-DD)."
+
+#: admin/class-wp-persian-datepicker-admin.php:153
+msgid "Show holidays in the calendar"
+msgstr "نمایش تعطیلات در تقویم"
+
+#: admin/class-wp-persian-datepicker-admin.php:166
+msgid "Enable right-to-left layout"
+msgstr "فعال‌سازی چیدمان راست به چپ"
+
+#: admin/class-wp-persian-datepicker-admin.php:179
+msgid "Enable dark mode"
+msgstr "فعال‌سازی حالت تاریک"
+
+#: admin/class-wp-persian-datepicker-admin.php:192
+msgid "Comma-separated list of holiday types to display (Iran, Afghanistan, AncientIran, International). Use \"all\" to show all types."
+msgstr "لیست انواع تعطیلات با کاما جدا شده (Iran, Afghanistan, AncientIran, International). از \"all\" برای نمایش همه انواع استفاده کنید."
+
+#: admin/class-wp-persian-datepicker-admin.php:205
+msgid "Enable date range selection mode"
+msgstr "فعال‌سازی حالت انتخاب بازه تاریخ"
+
+#: admin/class-wp-persian-datepicker-admin.php:255
+msgid "Settings saved."
+msgstr "تنظیمات ذخیره شد."
+
+#: admin/class-wp-persian-datepicker-admin.php:270
+msgid "Settings"
+msgstr "تنظیمات"
+
+#: admin/class-wp-persian-datepicker-admin.php:271
+msgid "Shortcode Usage"
+msgstr "نحوه استفاده از شورت‌کد"
+
+#: admin/class-wp-persian-datepicker-admin.php:292
+msgid "Preview"
+msgstr "پیش‌نمایش"
+
+#: admin/class-wp-persian-datepicker-admin.php:313
+msgid "To display the Persian Date Picker in your content, use the following shortcode:"
+msgstr "برای نمایش انتخابگر تاریخ شمسی در محتوای خود، از شورت‌کد زیر استفاده کنید:"
+
+#: admin/class-wp-persian-datepicker-admin.php:317
+msgid "You can customize the datepicker with various attributes:"
+msgstr "می‌توانید انتخابگر تاریخ را با ویژگی‌های مختلفی سفارشی کنید:"
+
+#: admin/class-wp-persian-datepicker-admin.php:322
+msgid "Basic Usage"
+msgstr "استفاده پایه"
+
+#: admin/class-wp-persian-datepicker-admin.php:326
+msgid "With Custom Placeholder"
+msgstr "با متن راهنمای سفارشی"
+
+#: admin/class-wp-persian-datepicker-admin.php:330
+msgid "With Custom Format"
+msgstr "با قالب سفارشی"
+
+#: admin/class-wp-persian-datepicker-admin.php:334
+msgid "Show Holidays"
+msgstr "نمایش تعطیلات"
+
+#: admin/class-wp-persian-datepicker-admin.php:338
+msgid "RTL Direction"
+msgstr "جهت راست به چپ"
+
+#: admin/class-wp-persian-datepicker-admin.php:342
+msgid "Dark Mode"
+msgstr "حالت تاریک"
+
+#: admin/class-wp-persian-datepicker-admin.php:346
+msgid "Range Mode"
+msgstr "حالت انتخاب بازه"
+
+#: admin/class-wp-persian-datepicker-admin.php:350
+msgid "Custom Holiday Types"
+msgstr "انواع تعطیلات سفارشی"
+
+#: admin/class-wp-persian-datepicker-admin.php:354
+msgid "Full Example"
+msgstr "مثال کامل"
+
+#: admin/class-wp-persian-datepicker-admin.php:360
+msgid "Gutenberg Block"
+msgstr "بلوک گوتنبرگ"
+
+#: admin/class-wp-persian-datepicker-admin.php:361
+msgid "You can also use the Persian Date Picker as a Gutenberg block. Simply search for \"Persian Date Picker\" in the block inserter."
+msgstr "شما همچنین می‌توانید از انتخابگر تاریخ شمسی به عنوان یک بلوک گوتنبرگ استفاده کنید. کافیست در درج‌کننده بلوک، عبارت «انتخابگر تاریخ شمسی» را جستجو کنید."
+
+#: includes/class-wp-persian-datepicker-widget.php:16
+msgid "A Persian (Jalali) date picker widget."
+msgstr "یک ابزارک انتخابگر تاریخ شمسی (جلالی)."
+
+#: includes/class-wp-persian-datepicker-widget.php:81
+msgid "Title:"
+msgstr "عنوان:"
+
+#: includes/class-wp-persian-datepicker-widget.php:91
+msgid "Placeholder:"
+msgstr "متن راهنما:"
+
+#: includes/class-wp-persian-datepicker-widget.php:101
+msgid "Date Format:"
+msgstr "قالب تاریخ:"
+
+#: includes/class-wp-persian-datepicker-widget.php:105
+msgid "e.g. YYYY/MM/DD or YYYY-MM-DD"
+msgstr "مثلاً YYYY/MM/DD یا YYYY-MM-DD"
+
+#: includes/class-wp-persian-datepicker-widget.php:115
+msgid "Holiday Types:"
+msgstr "انواع تعطیلات:"
+
+#: includes/class-wp-persian-datepicker-widget.php:146
+msgid "Comma-separated list: Iran,Afghanistan,AncientIran,International"
+msgstr "لیست جدا شده با کاما: Iran,Afghanistan,AncientIran,International"
+
+#: includes/class-wp-persian-datepicker-shortcode.php:29
+msgid "Today"
+msgstr "امروز"
+
+#: includes/class-wp-persian-datepicker-shortcode.php:30
+msgid "Tomorrow"
+msgstr "فردا" 

@@ -1,0 +1,93 @@
+/**
+ * Frontend CSS for WP Persian Datepicker Element
+ *
+ * @package    WP_Persian_Datepicker_Element
+ * @subpackage WP_Persian_Datepicker_Element/assets/css
+ */
+
+/* Basic styling for the datepicker component */
+.wp-persian-datepicker {
+    display: inline-block;
+    width: 100%;
+    max-width: 300px;
+    margin: 0 0 15px 0;
+    box-sizing: border-box;
+}
+
+/* RTL support */
+.rtl .wp-persian-datepicker {
+    direction: rtl;
+}
+
+/* Dark theme styles */
+.dark-theme .wp-persian-datepicker {
+    --jdp-background: #1e1e2f;
+    --jdp-foreground: #e2e8f0;
+    --jdp-muted: #334155;
+    --jdp-muted-foreground: #94a3b8;
+    --jdp-border: #475569;
+    --jdp-day-hover-bg: #334155;
+    --jdp-input-border-color: #475569;
+    --jdp-input-bg: #1e1e2f;
+    --jdp-calendar-bg: #1e1e2f;
+    --jdp-holiday-bg: #3f1e2e;
+}
+
+/* WordPress Form Integration */
+form .wp-persian-datepicker {
+    max-width: 100%;
+}
+
+/* Gravity Forms Integration */
+.gform_wrapper .wp-persian-datepicker {
+    max-width: 100%;
+}
+
+/* Contact Form 7 Integration */
+.wpcf7-form .wp-persian-datepicker {
+    max-width: 100%;
+}
+
+/* WooCommerce Integration */
+.woocommerce-input-wrapper .wp-persian-datepicker {
+    max-width: 100%;
+}
+
+/* Custom Themes and Color Schemes */
+.wp-persian-datepicker.blue-theme {
+    --jdp-primary: #3b82f6;
+    --jdp-primary-hover: #2563eb;
+}
+
+.wp-persian-datepicker.green-theme {
+    --jdp-primary: #10b981;
+    --jdp-primary-hover: #059669;
+}
+
+.wp-persian-datepicker.purple-theme {
+    --jdp-primary: #8b5cf6;
+    --jdp-primary-hover: #7c3aed;
+}
+
+.wp-persian-datepicker.orange-theme {
+    --jdp-primary: #f59e0b;
+    --jdp-primary-hover: #d97706;
+}
+
+.wp-persian-datepicker.red-theme {
+    --jdp-primary: #ef4444;
+    --jdp-primary-hover: #dc2626;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .wp-persian-datepicker {
+        max-width: 100%;
+    }
+}
+
+/* Accessibility improvements */
+.wp-persian-datepicker:focus-within {
+    outline: 2px solid var(--jdp-primary, #0891b2);
+    outline-offset: 2px;
+} 
