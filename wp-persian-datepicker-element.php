@@ -198,26 +198,32 @@ function wppdp_translate_strings($translation, $text, $domain) {
 class WP_Persian_Datepicker_Element {
 
     /**
-     * Active integrations
-     * 
+     * Active plugin integrations
+     *
      * @var array
      */
-    protected $active_integrations;
+    private $active_integrations = array();
 
     /**
-     * Initialize the plugin.
+     * Constructor - set up the plugin.
      */
     public function __construct() {
+        // Check for active integrations
+        $this->active_integrations = $this->check_integrations();
+        
+        // Load dependencies
         $this->load_dependencies();
-        $this->check_integrations();
+        
+        // Define hooks
         $this->define_hooks();
     }
-    
+
     /**
      * Check which plugins are active for integration
      */
     private function check_integrations() {
-        $this->active_integrations = [
+        // Set the active integrations
+        return array(
             'cf7' => wp_persian_datepicker_is_plugin_active('contact-form-7/wp-contact-form-7.php'),
             'woocommerce' => wp_persian_datepicker_is_plugin_active('woocommerce/woocommerce.php'),
             'gravity_forms' => wp_persian_datepicker_is_plugin_active('gravityforms/gravityforms.php'),
@@ -225,27 +231,38 @@ class WP_Persian_Datepicker_Element {
                 wp_persian_datepicker_is_plugin_active('wpforms-lite/wpforms.php') || 
                 wp_persian_datepicker_is_plugin_active('wpforms/wpforms.php')
             )
-        ];
+        );
     }
 
     /**
-     * Load required dependencies.
+     * Load the required dependencies for this plugin.
      */
     private function load_dependencies() {
-        // Include files
+        // Include the loader class
         require_once PERSIAN_DATEPICKER_PLUGIN_DIR . 'includes/class-wp-persian-datepicker-loader.php';
-        require_once PERSIAN_DATEPICKER_PLUGIN_DIR . 'includes/class-wp-persian-datepicker-scripts.php';
-        require_once PERSIAN_DATEPICKER_PLUGIN_DIR . 'includes/class-wp-persian-datepicker-shortcode.php';
-        require_once PERSIAN_DATEPICKER_PLUGIN_DIR . 'includes/class-wp-persian-datepicker-widget.php';
+        
+        // Include the admin class
         require_once PERSIAN_DATEPICKER_PLUGIN_DIR . 'admin/class-wp-persian-datepicker-admin.php';
+        
+        // Include scripts manager
+        require_once PERSIAN_DATEPICKER_PLUGIN_DIR . 'includes/class-wp-persian-datepicker-scripts.php';
+        
+        // Include shortcode class
+        require_once PERSIAN_DATEPICKER_PLUGIN_DIR . 'includes/class-wp-persian-datepicker-shortcode.php';
+        
+        // Include widget class
+        require_once PERSIAN_DATEPICKER_PLUGIN_DIR . 'includes/class-wp-persian-datepicker-widget.php';
     }
 
     /**
-     * Define hooks and filters.
+     * Define the hooks.
      */
     private function define_hooks() {
-        // Initialize the loader
+        // Create a new loader
         $loader = new WP_Persian_Datepicker_Loader();
+        
+        // Debug - Check if we're properly loading
+        error_log('WP Persian Datepicker Element: Plugin initializing');
         
         // Initialize the admin
         $admin = new WP_Persian_Datepicker_Admin();
@@ -396,24 +413,46 @@ class WP_Persian_Datepicker_Element {
      * Activate the plugin.
      */
     public static function activate() {
-        // Set default options
+        // Set default options if they don't exist
         if (!get_option('wp_persian_datepicker_options')) {
             $default_options = array(
                 'placeholder' => 'انتخاب تاریخ',
+                'format' => 'YYYY/MM/DD',
                 'show_holidays' => 1,
                 'rtl' => 1,
-                'format' => 'YYYY/MM/DD',
-                'holiday_types' => 'Iran,International',
                 'dark_mode' => 0,
-                'range_mode' => 0, // Explicitly set to 0 (false)
+                'holiday_types' => 'Iran,International',
+                'range_mode' => 0,
             );
             update_option('wp_persian_datepicker_options', $default_options);
+            
+            // Log activation
+            error_log('WP Persian Datepicker Element: Plugin activated with default options');
         } else {
-            // If options already exist, ensure range_mode is set with a valid value
+            // If options already exist, ensure all keys are set with valid values
             $existing_options = get_option('wp_persian_datepicker_options');
-            if (!isset($existing_options['range_mode'])) {
-                $existing_options['range_mode'] = 0; // Set default to false if not set
+            $updated = false;
+            
+            $required_keys = array(
+                'placeholder' => 'انتخاب تاریخ',
+                'format' => 'YYYY/MM/DD',
+                'show_holidays' => 1,
+                'rtl' => 1,
+                'dark_mode' => 0,
+                'holiday_types' => 'Iran,International',
+                'range_mode' => 0,
+            );
+            
+            foreach ($required_keys as $key => $default_value) {
+                if (!isset($existing_options[$key])) {
+                    $existing_options[$key] = $default_value;
+                    $updated = true;
+                }
+            }
+            
+            if ($updated) {
                 update_option('wp_persian_datepicker_options', $existing_options);
+                error_log('WP Persian Datepicker Element: Plugin options updated during activation');
             }
         }
         
@@ -610,4 +649,56 @@ function wppdp_persian_admin_buttons() {
         }
     }
 }
-add_action('admin_footer', 'wppdp_persian_admin_buttons'); 
+add_action('admin_footer', 'wppdp_persian_admin_buttons');
+
+/**
+ * Normalize option values for front-end use
+ * Ensures all boolean options are properly converted to true/false values
+ */
+function wp_persian_datepicker_normalize_options() {
+    $options = get_option('wp_persian_datepicker_options', array());
+    $normalized = array();
+    
+    // Ensure default values
+    $defaults = array(
+        'placeholder' => 'انتخاب تاریخ',
+        'format' => 'YYYY/MM/DD',
+        'show_holidays' => 1,
+        'rtl' => 1,
+        'dark_mode' => 0,
+        'holiday_types' => 'Iran,International',
+        'range_mode' => 0,
+    );
+    
+    // Merge with defaults
+    $options = array_merge($defaults, $options);
+    
+    // Convert numeric boolean values to actual booleans for JavaScript
+    $boolean_keys = array('show_holidays', 'rtl', 'dark_mode', 'range_mode');
+    
+    foreach ($options as $key => $value) {
+        if (in_array($key, $boolean_keys)) {
+            $normalized[$key] = (bool)$value;
+        } else {
+            $normalized[$key] = $value;
+        }
+    }
+    
+    // Add plugin base URL to options
+    $normalized['plugin_url'] = PERSIAN_DATEPICKER_PLUGIN_URL;
+    
+    return $normalized;
+}
+
+/**
+ * Enqueue the front-end scripts and pass the correct options
+ */
+function wp_persian_datepicker_enqueue_frontend() {
+    // Pass normalized options to script
+    wp_localize_script(
+        'wp-persian-datepicker-frontend',
+        'wpPersianDatepickerOptions',
+        wp_persian_datepicker_normalize_options()
+    );
+}
+add_action('wp_enqueue_scripts', 'wp_persian_datepicker_enqueue_frontend', 25); 

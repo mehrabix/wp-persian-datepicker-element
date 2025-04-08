@@ -24,18 +24,18 @@ class WP_Persian_Datepicker_Shortcode {
         // Get global plugin options
         $options = get_option('wp_persian_datepicker_options', array());
         
-        // Debug output to check the range_mode value in options
-        // echo "<!-- Debug: Range Mode in Options: " . (isset($options['range_mode']) ? $options['range_mode'] : 'not set') . " -->";
+        // Log options for debugging
+        error_log('WP Persian Datepicker Shortcode: Options = ' . print_r($options, true));
         
-        // Define default attributes
+        // Define default attributes, using settings as defaults
         $default_atts = array(
             'placeholder' => isset($options['placeholder']) ? $options['placeholder'] : 'انتخاب تاریخ',
             'format' => isset($options['format']) ? $options['format'] : 'YYYY/MM/DD',
-            'show_holidays' => isset($options['show_holidays']) ? filter_var($options['show_holidays'], FILTER_VALIDATE_BOOLEAN) : true,
-            'rtl' => isset($options['rtl']) ? filter_var($options['rtl'], FILTER_VALIDATE_BOOLEAN) : true,
-            'dark_mode' => isset($options['dark_mode']) ? filter_var($options['dark_mode'], FILTER_VALIDATE_BOOLEAN) : false,
+            'show_holidays' => isset($options['show_holidays']) ? (bool)$options['show_holidays'] : true,
+            'rtl' => isset($options['rtl']) ? (bool)$options['rtl'] : true,
+            'dark_mode' => isset($options['dark_mode']) ? (bool)$options['dark_mode'] : false,
             'holiday_types' => isset($options['holiday_types']) ? $options['holiday_types'] : 'Iran,International',
-            'range_mode' => isset($options['range_mode']) ? filter_var($options['range_mode'], FILTER_VALIDATE_BOOLEAN) : false,
+            'range_mode' => isset($options['range_mode']) ? (bool)$options['range_mode'] : false,
             'class' => '',
             'id' => 'pdp-' . uniqid(),
             'name' => '',

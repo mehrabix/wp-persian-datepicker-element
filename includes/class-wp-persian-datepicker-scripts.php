@@ -34,7 +34,12 @@ class WP_Persian_Datepicker_Scripts {
      *
      * @since    1.0.0
      */
-    public function enqueue_admin_scripts() {
+    public function enqueue_admin_scripts($hook) {
+        // Only load on plugin settings page
+        if ('settings_page_wp-persian-datepicker-settings' !== $hook) {
+            return;
+        }
+        
         // CSS for admin settings page
         wp_enqueue_style(
             'wp-persian-datepicker-admin',
@@ -105,18 +110,9 @@ class WP_Persian_Datepicker_Scripts {
             true
         );
         
-        // Pass options to the script
-        $options = get_option('wp_persian_datepicker_options', array());
-        
-        // Add plugin base URL to options
-        $options['plugin_url'] = PERSIAN_DATEPICKER_PLUGIN_URL;
-        
-        // Pass options to script
-        wp_localize_script(
-            'wp-persian-datepicker-frontend',
-            'wpPersianDatepickerOptions',
-            $options
-        );
+        // Use normalized options instead of directly passing raw options
+        // This is now handled by wp_persian_datepicker_enqueue_frontend()
+        // which is hooked to wp_enqueue_scripts with a later priority
         
         // Pass active plugin integrations to script
         $integrations = array(

@@ -208,153 +208,285 @@ class WP_Persian_Datepicker_Admin {
     }
     
     /**
-     * Validate settings.
+     * Validate and sanitize options.
      *
      * @since    1.0.0
-     * @param    array    $input    The input options.
-     * @return   array              The validated options.
+     * @param    array    $input    Array of input values.
+     * @return   array    Sanitized input values.
      */
     public function validate_options($input) {
-        $validated = array();
+        $sanitized_input = array();
         
-        // Validate placeholder
-        $validated['placeholder'] = sanitize_text_field($input['placeholder']);
+        // Debug options being saved
+        error_log('WP Persian Datepicker: Validating options: ' . print_r($input, true));
         
-        // Validate format
-        $validated['format'] = sanitize_text_field($input['format']);
+        // Sanitize text fields
+        if (isset($input['placeholder'])) {
+            $sanitized_input['placeholder'] = sanitize_text_field($input['placeholder']);
+        }
         
-        // Validate show_holidays
-        $validated['show_holidays'] = isset($input['show_holidays']) ? 1 : 0;
+        if (isset($input['format'])) {
+            $sanitized_input['format'] = sanitize_text_field($input['format']);
+        }
         
-        // Validate rtl
-        $validated['rtl'] = isset($input['rtl']) ? 1 : 0;
+        if (isset($input['holiday_types'])) {
+            $sanitized_input['holiday_types'] = sanitize_text_field($input['holiday_types']);
+        }
         
-        // Validate dark_mode
-        $validated['dark_mode'] = isset($input['dark_mode']) ? 1 : 0;
+        // Sanitize checkboxes (boolean values)
+        // For checkboxes, we need to explicitly check if they're set or not
+        $sanitized_input['show_holidays'] = isset($input['show_holidays']) ? 1 : 0;
+        $sanitized_input['rtl'] = isset($input['rtl']) ? 1 : 0;
+        $sanitized_input['dark_mode'] = isset($input['dark_mode']) ? 1 : 0;
+        $sanitized_input['range_mode'] = isset($input['range_mode']) ? 1 : 0;
         
-        // Validate holiday_types
-        $validated['holiday_types'] = sanitize_text_field($input['holiday_types']);
-        
-        // Validate range_mode
-        $validated['range_mode'] = isset($input['range_mode']) ? 1 : 0;
-        
-        return $validated;
+        return $sanitized_input;
     }
     
     /**
-     * Display the settings page.
+     * Display the settings page content.
      *
      * @since    1.0.0
      */
     public function display_settings_page() {
+        // Check user capabilities
         if (!current_user_can('manage_options')) {
             return;
         }
         
-        // Check if settings updated and show message
-        if (isset($_GET['settings-updated']) && $_GET['settings-updated']) {
-            add_settings_error(
-                'wp_persian_datepicker_messages',
-                'wp_persian_datepicker_message',
-                esc_html__('Settings saved.', 'wp-persian-datepicker-element'),
-                'updated'
-            );
+        // Default options
+        $default_options = array(
+            'placeholder' => 'انتخاب تاریخ',
+            'format' => 'YYYY/MM/DD',
+            'show_holidays' => 1,
+            'rtl' => 1,
+            'dark_mode' => 0,
+            'holiday_types' => 'Iran,International',
+            'range_mode' => 0
+        );
+        
+        // Get current options
+        $options = get_option('wp_persian_datepicker_options', $default_options);
+        
+        // Handle form submissions and save settings
+        if (isset($_POST['submit']) && isset($_POST['wp_persian_datepicker_options_nonce'])) {
+            // Verify nonce
+            if (check_admin_referer('wp_persian_datepicker_options_action', 'wp_persian_datepicker_options_nonce')) {
+                // Debug: Check what's being submitted
+                error_log('WP Persian Datepicker: Form submitted with data: ' . print_r($_POST['wp_persian_datepicker_options'], true));
+                
+                // Process form data
+                $new_options = array();
+                
+                // Sanitize text fields
+                $new_options['placeholder'] = isset($_POST['wp_persian_datepicker_options']['placeholder']) ? 
+                    sanitize_text_field($_POST['wp_persian_datepicker_options']['placeholder']) : $default_options['placeholder'];
+                    
+                $new_options['format'] = isset($_POST['wp_persian_datepicker_options']['format']) ? 
+                    sanitize_text_field($_POST['wp_persian_datepicker_options']['format']) : $default_options['format'];
+                    
+                $new_options['holiday_types'] = isset($_POST['wp_persian_datepicker_options']['holiday_types']) ? 
+                    sanitize_text_field($_POST['wp_persian_datepicker_options']['holiday_types']) : $default_options['holiday_types'];
+                
+                // Process checkboxes (they'll only be in the POST array if checked)
+                $new_options['show_holidays'] = isset($_POST['wp_persian_datepicker_options']['show_holidays']) ? 1 : 0;
+                $new_options['rtl'] = isset($_POST['wp_persian_datepicker_options']['rtl']) ? 1 : 0;
+                $new_options['dark_mode'] = isset($_POST['wp_persian_datepicker_options']['dark_mode']) ? 1 : 0;
+                $new_options['range_mode'] = isset($_POST['wp_persian_datepicker_options']['range_mode']) ? 1 : 0;
+                
+                // Update the options
+                update_option('wp_persian_datepicker_options', $new_options);
+                
+                // Update our local copy for display
+                $options = $new_options;
+                
+                // Add success message
+                add_settings_error(
+                    'wp_persian_datepicker_messages',
+                    'wp_persian_datepicker_message',
+                    esc_html__('Settings saved.', 'wp-persian-datepicker-element'),
+                    'updated'
+                );
+                
+                // Debug: Check what's being saved
+                error_log('WP Persian Datepicker: Saved options: ' . print_r($new_options, true));
+            }
         }
         
-        // Show settings errors
-        settings_errors('wp_persian_datepicker_messages');
-        
-        // اضافه کردن کلاس RTL برای زبان فارسی
-        $rtl_class = (determine_locale() === 'fa_IR') ? ' rtl' : '';
-        
-        // استایل های مخصوص فارسی
-        if (determine_locale() === 'fa_IR') {
-            ?>
-            <style type="text/css">
-                .rtl .form-table th {
-                    text-align: right;
-                    font-family: Tahoma, Arial;
-                }
-                .rtl h1, .rtl h2, .rtl h3, 
-                .rtl .form-table td, 
-                .rtl p, 
-                .rtl .description, 
-                .rtl label,
-                .rtl .nav-tab {
-                    font-family: Tahoma, Arial;
-                }
-                .rtl input[type="checkbox"] {
-                    margin-left: 8px;
-                    margin-right: 0;
-                }
-                .rtl code {
-                    direction: ltr;
-                    display: inline-block;
-                }
-                .rtl .wp-persian-datepicker-help .form-table th {
-                    font-weight: normal;
-                }
-                .integration-example {
-                    background: #f8f8f8;
-                    padding: 15px;
-                    border-left: 4px solid #2271b1;
-                    margin: 10px 0;
-                }
-                .code-block {
-                    background: #f0f0f0;
-                    padding: 10px;
-                    border: 1px solid #ddd;
-                    margin: 10px 0;
-                    direction: ltr;
-                    display: block;
-                    overflow-x: auto;
-                }
-            </style>
-            <?php
-        }
+        // Display settings page HTML
         ?>
-        
-        <div class="wrap<?php echo esc_attr($rtl_class); ?>">
+        <div class="wrap">
             <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
             
-            <div class="nav-tab-wrapper">
-                <a href="?page=wp-persian-datepicker-settings" class="nav-tab <?php echo (empty($_GET['tab']) || $_GET['tab'] === 'settings') ? 'nav-tab-active' : ''; ?>"><?php esc_html_e('Settings', 'wp-persian-datepicker-element'); ?></a>
-                <a href="?page=wp-persian-datepicker-settings&tab=shortcode" class="nav-tab <?php echo (isset($_GET['tab']) && $_GET['tab'] === 'shortcode') ? 'nav-tab-active' : ''; ?>"><?php esc_html_e('Shortcode Usage', 'wp-persian-datepicker-element'); ?></a>
-                <a href="?page=wp-persian-datepicker-settings&tab=integration" class="nav-tab <?php echo (isset($_GET['tab']) && $_GET['tab'] === 'integration') ? 'nav-tab-active' : ''; ?>"><?php echo (determine_locale() === 'fa_IR') ? 'راهنمای ادغام' : esc_html__('Integration Guide', 'wp-persian-datepicker-element'); ?></a>
+            <?php settings_errors('wp_persian_datepicker_messages'); ?>
+            
+            <h2 class="nav-tab-wrapper">
+                <a href="#settings" class="nav-tab nav-tab-active"><?php esc_html_e('Settings', 'wp-persian-datepicker-element'); ?></a>
+                <a href="#shortcode" class="nav-tab"><?php esc_html_e('Shortcode Usage', 'wp-persian-datepicker-element'); ?></a>
+                <a href="#integration" class="nav-tab"><?php esc_html_e('Integration', 'wp-persian-datepicker-element'); ?></a>
+            </h2>
+            
+            <div id="settings" class="tab-content">
+                <form method="post" action="">
+                    <?php wp_nonce_field('wp_persian_datepicker_options_action', 'wp_persian_datepicker_options_nonce'); ?>
+                    
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row">
+                                <label for="wp_persian_datepicker_placeholder"><?php esc_html_e('Default Placeholder', 'wp-persian-datepicker-element'); ?></label>
+                            </th>
+                            <td>
+                                <input type="text" id="wp_persian_datepicker_placeholder" name="wp_persian_datepicker_options[placeholder]" value="<?php echo esc_attr($options['placeholder']); ?>" class="regular-text" />
+                                <p class="description"><?php esc_html_e('The placeholder text to show in the input field.', 'wp-persian-datepicker-element'); ?></p>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <th scope="row">
+                                <label for="wp_persian_datepicker_format"><?php esc_html_e('Default Date Format', 'wp-persian-datepicker-element'); ?></label>
+                            </th>
+                            <td>
+                                <input type="text" id="wp_persian_datepicker_format" name="wp_persian_datepicker_options[format]" value="<?php echo esc_attr($options['format']); ?>" class="regular-text" />
+                                <p class="description"><?php esc_html_e('The date format pattern (e.g. YYYY/MM/DD, YYYY-MM-DD).', 'wp-persian-datepicker-element'); ?></p>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <th scope="row">
+                                <?php esc_html_e('Show Holidays', 'wp-persian-datepicker-element'); ?>
+                            </th>
+                            <td>
+                                <input type="checkbox" id="wp_persian_datepicker_show_holidays" name="wp_persian_datepicker_options[show_holidays]" value="1" <?php checked(1, $options['show_holidays']); ?> />
+                                <label for="wp_persian_datepicker_show_holidays"><?php esc_html_e('Show holidays in the calendar', 'wp-persian-datepicker-element'); ?></label>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <th scope="row">
+                                <?php esc_html_e('Right-to-Left (RTL)', 'wp-persian-datepicker-element'); ?>
+                            </th>
+                            <td>
+                                <input type="checkbox" id="wp_persian_datepicker_rtl" name="wp_persian_datepicker_options[rtl]" value="1" <?php checked(1, $options['rtl']); ?> />
+                                <label for="wp_persian_datepicker_rtl"><?php esc_html_e('Enable right-to-left layout', 'wp-persian-datepicker-element'); ?></label>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <th scope="row">
+                                <?php esc_html_e('Dark Mode', 'wp-persian-datepicker-element'); ?>
+                            </th>
+                            <td>
+                                <input type="checkbox" id="wp_persian_datepicker_dark_mode" name="wp_persian_datepicker_options[dark_mode]" value="1" <?php checked(1, $options['dark_mode']); ?> />
+                                <label for="wp_persian_datepicker_dark_mode"><?php esc_html_e('Enable dark mode', 'wp-persian-datepicker-element'); ?></label>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <th scope="row">
+                                <label for="wp_persian_datepicker_holiday_types"><?php esc_html_e('Holiday Types', 'wp-persian-datepicker-element'); ?></label>
+                            </th>
+                            <td>
+                                <input type="text" id="wp_persian_datepicker_holiday_types" name="wp_persian_datepicker_options[holiday_types]" value="<?php echo esc_attr($options['holiday_types']); ?>" class="regular-text" />
+                                <p class="description"><?php esc_html_e('Comma-separated list of holiday types to display (Iran, Afghanistan, AncientIran, International). Use "all" to show all types.', 'wp-persian-datepicker-element'); ?></p>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <th scope="row">
+                                <?php esc_html_e('Range Mode', 'wp-persian-datepicker-element'); ?>
+                            </th>
+                            <td>
+                                <input type="checkbox" id="wp_persian_datepicker_range_mode" name="wp_persian_datepicker_options[range_mode]" value="1" <?php checked(1, $options['range_mode']); ?> />
+                                <label for="wp_persian_datepicker_range_mode"><?php esc_html_e('Enable date range selection mode', 'wp-persian-datepicker-element'); ?></label>
+                            </td>
+                        </tr>
+                    </table>
+                    
+                    <?php submit_button(); ?>
+                    
+                    <div class="persian-datepicker-preview">
+                        <h3><?php esc_html_e('Preview', 'wp-persian-datepicker-element'); ?></h3>
+                        <div class="preview-container">
+                            <?php 
+                            // Convert options to attributes
+                            $attrs = array();
+                            if (!empty($options['placeholder'])) $attrs[] = 'placeholder="' . esc_attr($options['placeholder']) . '"';
+                            if (!empty($options['format'])) $attrs[] = 'format="' . esc_attr($options['format']) . '"';
+                            if (isset($options['show_holidays'])) $attrs[] = 'show-holidays="' . (empty($options['show_holidays']) ? 'false' : 'true') . '"';
+                            if (isset($options['rtl'])) $attrs[] = 'rtl="' . (empty($options['rtl']) ? 'false' : 'true') . '"';
+                            if (isset($options['dark_mode'])) $attrs[] = 'darkmode="' . (empty($options['dark_mode']) ? 'false' : 'true') . '"';
+                            if (!empty($options['holiday_types'])) $attrs[] = 'holiday-types="' . esc_attr($options['holiday_types']) . '"';
+                            if (isset($options['range_mode'])) $attrs[] = 'range-mode="' . (empty($options['range_mode']) ? 'false' : 'true') . '"';
+                            
+                            $dark_class = !empty($options['dark_mode']) ? ' dark-theme' : '';
+                            ?>
+                            <div class="preview-datepicker<?php echo esc_attr($dark_class); ?>">
+                                <persian-datepicker-element id="preview-datepicker" <?php echo implode(' ', $attrs); ?>></persian-datepicker-element>
+                            </div>
+                            <p class="description">
+                                <?php esc_html_e('This preview reflects your current settings. Changes to settings will update this preview.', 'wp-persian-datepicker-element'); ?>
+                            </p>
+                        </div>
+                    </div>
+                </form>
             </div>
             
-            <?php
-            $active_tab = isset($_GET['tab']) ? $_GET['tab'] : 'settings';
+            <div id="shortcode" class="tab-content" style="display: none;">
+                <?php $this->display_shortcode_help(); ?>
+            </div>
             
-            if ($active_tab === 'shortcode') {
-                $this->display_shortcode_help();
-            } elseif ($active_tab === 'integration') {
-                $this->display_integration_guide();
-            } else {
-                // Display the settings form
-                ?>
-                <form action="options.php" method="post">
-                    <?php
-                    settings_fields('wp_persian_datepicker_options');
-                    do_settings_sections('wp-persian-datepicker-settings');
-                    submit_button();
-                    ?>
-                </form>
-                
-                <h2><?php esc_html_e('Preview', 'wp-persian-datepicker-element'); ?></h2>
-                <div class="persian-datepicker-preview">
-                    <?php 
-                    // Create an instance of the shortcode class
-                    $shortcode = new WP_Persian_Datepicker_Shortcode();
-                    
-                    // Output the datepicker using the current settings
-                    echo $shortcode->render_shortcode(array()); 
-                    ?>
-                </div>
+            <div id="integration" class="tab-content" style="display: none;">
                 <?php
-            }
-            ?>
+                $locale = determine_locale();
+                if ($locale == 'fa_IR') {
+                    $this->display_integration_guide_fa();
+                } else {
+                    $this->display_integration_guide_en();
+                }
+                ?>
+            </div>
         </div>
+        <div id="wp-pd-debug" style="margin-top: 30px; padding: 15px; border: 1px solid #ccc; background: #f8f8f8; display: none;">
+            <h3>Debug Information</h3>
+            <pre id="wp-pd-debug-options"><?php echo esc_html(print_r($options, true)); ?></pre>
+            <div id="wp-pd-debug-current"></div>
+        </div>
+        <p><a href="#" id="wp-pd-toggle-debug">Toggle Debug Information</a></p>
+        <script>
+        jQuery(document).ready(function($) {
+            console.log('Settings page loaded');
+            console.log('Current options:', <?php echo json_encode($options); ?>);
+            
+            // Log checkbox states for debugging
+            console.log('Checkbox states:', {
+                show_holidays: $('#wp_persian_datepicker_show_holidays').is(':checked'),
+                rtl: $('#wp_persian_datepicker_rtl').is(':checked'),
+                dark_mode: $('#wp_persian_datepicker_dark_mode').is(':checked'),
+                range_mode: $('#wp_persian_datepicker_range_mode').is(':checked')
+            });
+            
+            // Toggle debug info
+            $('#wp-pd-toggle-debug').on('click', function(e) {
+                e.preventDefault();
+                $('#wp-pd-debug').toggle();
+            });
+            
+            // Update debug info when form changes
+            $('input[name^="wp_persian_datepicker_options"]').on('change input', function() {
+                var debugInfo = '<h4>Current Form Values:</h4><ul>';
+                debugInfo += '<li>Placeholder: ' + $('#wp_persian_datepicker_placeholder').val() + '</li>';
+                debugInfo += '<li>Format: ' + $('#wp_persian_datepicker_format').val() + '</li>';
+                debugInfo += '<li>Show Holidays: ' + $('#wp_persian_datepicker_show_holidays').is(':checked') + '</li>';
+                debugInfo += '<li>RTL: ' + $('#wp_persian_datepicker_rtl').is(':checked') + '</li>';
+                debugInfo += '<li>Dark Mode: ' + $('#wp_persian_datepicker_dark_mode').is(':checked') + '</li>';
+                debugInfo += '<li>Holiday Types: ' + $('#wp_persian_datepicker_holiday_types').val() + '</li>';
+                debugInfo += '<li>Range Mode: ' + $('#wp_persian_datepicker_range_mode').is(':checked') + '</li>';
+                debugInfo += '</ul>';
+                
+                $('#wp-pd-debug-current').html(debugInfo);
+            });
+        });
+        </script>
         <?php
     }
     
@@ -877,6 +1009,26 @@ persian-datepicker-element {
     /* Custom width */
     width: 280px;
 }</pre>
+            
+            <h3>استفاده در قالب‌ها و کدهای سفارشی</h3>
+            
+            <p>می‌توانید از تابع کوتاه PHP زیر در قالب‌های سفارشی خود استفاده کنید:</p>
+            
+            <pre class="code-block">// در فایل PHP قالب خود
+if (function_exists('persian_datepicker_shortcode')) {
+    echo persian_datepicker_shortcode([
+        'placeholder' => 'تاریخ انتخاب کنید',
+        'format' => 'YYYY/MM/DD',
+        'show_holidays' => 'true',
+        'rtl' => 'true',
+        'holiday_types' => 'Iran,International'
+    ]);
+}</pre>
+            
+            <div class="integration-example">
+                <h4>نکته مهم</h4>
+                <p>برای بهترین عملکرد، همیشه اطمینان حاصل کنید که کلاس «persian-datepicker» را به فیلدهای متنی‌ای که می‌خواهید به انتخابگر تاریخ شمسی تبدیل شوند، اضافه کرده‌اید. این باعث می‌شود فرآیند تبدیل به طور خودکار انجام شود.</p>
+            </div>
         </div>
         <?php
     }
