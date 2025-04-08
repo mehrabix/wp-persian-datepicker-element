@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name: WP Persian Datepicker Element
- * Plugin URI: https://github.com/yourusername/wp-persian-datepicker-element
+ * Plugin URI: https://github.com/mehrabix/wp-persian-datepicker-element
  * Description: A modern, highly customizable Persian (Jalali) date picker web component for WordPress with Contact Form 7, WPForms, Gravity Forms, and WooCommerce integration
  * Version: 1.1.0
  * Author: Ahmad Mehrabi
- * Author URI: https://github.com/yourusername
+ * Author URI: https://github.com/mehrabix
  * Text Domain: wp-persian-datepicker-element
  * Domain Path: /languages
  * License: MIT
@@ -779,24 +779,24 @@ function wp_persian_datepicker_add_attribute_fix() {
                 picker.style.setProperty('--jdp-input-focus-shadow', '0 0 0 1px #0891b2');
             } else {
                 picker.removeAttribute('dark-mode');
-                // Remove all dark mode specific styles to revert to default
-                picker.style.removeProperty('--jdp-background');
-                picker.style.removeProperty('--jdp-foreground');
-                picker.style.removeProperty('--jdp-muted');
-                picker.style.removeProperty('--jdp-muted-foreground');
-                picker.style.removeProperty('--jdp-border');
-                picker.style.removeProperty('--jdp-day-hover-bg');
-                picker.style.removeProperty('--jdp-input-border-color');
-                picker.style.removeProperty('--jdp-input-bg');
-                picker.style.removeProperty('--jdp-calendar-bg');
-                picker.style.removeProperty('--jdp-holiday-bg');
-                picker.style.removeProperty('--jdp-border-color');
-                picker.style.removeProperty('--jdp-nav-arrow-color');
-                picker.style.removeProperty('--jdp-selected-bg');
-                picker.style.removeProperty('--jdp-hover-bg');
-                picker.style.removeProperty('--jdp-today-border-color');
-                picker.style.removeProperty('--jdp-input-focus-border');
-                picker.style.removeProperty('--jdp-input-focus-shadow');
+                // Instead of just removing properties, set light mode values explicitly
+                picker.style.setProperty('--jdp-background', '#ffffff');
+                picker.style.setProperty('--jdp-foreground', '#333333');
+                picker.style.setProperty('--jdp-muted', '#f1f5f9');
+                picker.style.setProperty('--jdp-muted-foreground', '#64748b');
+                picker.style.setProperty('--jdp-border', '#e2e8f0');
+                picker.style.setProperty('--jdp-day-hover-bg', '#f1f5f9');
+                picker.style.setProperty('--jdp-input-border-color', '#ddd');
+                picker.style.setProperty('--jdp-input-bg', '#ffffff');
+                picker.style.setProperty('--jdp-calendar-bg', '#ffffff');
+                picker.style.setProperty('--jdp-holiday-bg', '#fff1f2');
+                picker.style.setProperty('--jdp-border-color', '#ddd');
+                picker.style.setProperty('--jdp-nav-arrow-color', '#505050');
+                picker.style.setProperty('--jdp-selected-bg', '#2271b1');
+                picker.style.setProperty('--jdp-hover-bg', 'rgba(34, 113, 177, 0.1)');
+                picker.style.setProperty('--jdp-today-border-color', '#2271b1');
+                picker.style.setProperty('--jdp-input-focus-border', '#2271b1');
+                picker.style.setProperty('--jdp-input-focus-shadow', '0 0 0 1px #2271b1');
             }
         }
         
@@ -928,7 +928,7 @@ function wp_persian_datepicker_direct_property_fix() {
                         // Set the dark-mode attribute properly
                         picker.setAttribute('dark-mode', shouldEnableDarkMode ? 'true' : 'false');
                         
-                        // Apply dark mode styles directly
+                        // Apply appropriate mode styles
                         if (shouldEnableDarkMode) {
                             // Apply dark mode CSS variables from basic.html
                             picker.style.setProperty('--jdp-background', '#1e1e2f');
@@ -950,6 +950,27 @@ function wp_persian_datepicker_direct_property_fix() {
                             picker.style.setProperty('--jdp-input-focus-shadow', '0 0 0 1px #0891b2');
                             
                             console.log('Applied dark mode styles to datepicker #' + index);
+                        } else {
+                            // Apply light mode CSS variables 
+                            picker.style.setProperty('--jdp-background', '#ffffff');
+                            picker.style.setProperty('--jdp-foreground', '#333333');
+                            picker.style.setProperty('--jdp-muted', '#f1f5f9');
+                            picker.style.setProperty('--jdp-muted-foreground', '#64748b');
+                            picker.style.setProperty('--jdp-border', '#e2e8f0');
+                            picker.style.setProperty('--jdp-day-hover-bg', '#f1f5f9');
+                            picker.style.setProperty('--jdp-input-border-color', '#ddd');
+                            picker.style.setProperty('--jdp-input-bg', '#ffffff');
+                            picker.style.setProperty('--jdp-calendar-bg', '#ffffff');
+                            picker.style.setProperty('--jdp-holiday-bg', '#fff1f2');
+                            picker.style.setProperty('--jdp-border-color', '#ddd');
+                            picker.style.setProperty('--jdp-nav-arrow-color', '#505050');
+                            picker.style.setProperty('--jdp-selected-bg', '#2271b1');
+                            picker.style.setProperty('--jdp-hover-bg', 'rgba(34, 113, 177, 0.1)');
+                            picker.style.setProperty('--jdp-today-border-color', '#2271b1');
+                            picker.style.setProperty('--jdp-input-focus-border', '#2271b1');
+                            picker.style.setProperty('--jdp-input-focus-shadow', '0 0 0 1px #2271b1');
+                            
+                            console.log('Applied light mode styles to datepicker #' + index);
                         }
                         
                         // Try to set the property directly if possible
@@ -998,9 +1019,9 @@ function wp_persian_datepicker_direct_property_fix() {
                                         // Set the dark-mode attribute properly
                                         node.setAttribute('dark-mode', shouldEnableDarkMode ? 'true' : 'false');
                                         
-                                        // Apply dark mode styles directly if needed
+                                        // Apply appropriate mode styles
                                         if (shouldEnableDarkMode) {
-                                            // Apply the dark mode CSS variables directly
+                                            // Apply the dark mode CSS variables
                                             node.style.setProperty('--jdp-background', '#1e1e2f');
                                             node.style.setProperty('--jdp-foreground', '#e2e8f0');
                                             node.style.setProperty('--jdp-muted', '#334155');
@@ -1018,11 +1039,25 @@ function wp_persian_datepicker_direct_property_fix() {
                                             node.style.setProperty('--jdp-today-border-color', '#0891b2');
                                             node.style.setProperty('--jdp-input-focus-border', '#0891b2');
                                             node.style.setProperty('--jdp-input-focus-shadow', '0 0 0 1px #0891b2');
-                                        }
-                                        
-                                        // Try to set the property directly if possible
-                                        if (typeof node.darkMode !== 'undefined') {
-                                            node.darkMode = shouldEnableDarkMode;
+                                        } else {
+                                            // Apply light mode CSS variables
+                                            node.style.setProperty('--jdp-background', '#ffffff');
+                                            node.style.setProperty('--jdp-foreground', '#333333');
+                                            node.style.setProperty('--jdp-muted', '#f1f5f9');
+                                            node.style.setProperty('--jdp-muted-foreground', '#64748b');
+                                            node.style.setProperty('--jdp-border', '#e2e8f0');
+                                            node.style.setProperty('--jdp-day-hover-bg', '#f1f5f9');
+                                            node.style.setProperty('--jdp-input-border-color', '#ddd');
+                                            node.style.setProperty('--jdp-input-bg', '#ffffff');
+                                            node.style.setProperty('--jdp-calendar-bg', '#ffffff');
+                                            node.style.setProperty('--jdp-holiday-bg', '#fff1f2');
+                                            node.style.setProperty('--jdp-border-color', '#ddd');
+                                            node.style.setProperty('--jdp-nav-arrow-color', '#505050');
+                                            node.style.setProperty('--jdp-selected-bg', '#2271b1');
+                                            node.style.setProperty('--jdp-hover-bg', 'rgba(34, 113, 177, 0.1)');
+                                            node.style.setProperty('--jdp-today-border-color', '#2271b1');
+                                            node.style.setProperty('--jdp-input-focus-border', '#2271b1');
+                                            node.style.setProperty('--jdp-input-focus-shadow', '0 0 0 1px #2271b1');
                                         }
                                     }
                                 }
@@ -1164,7 +1199,7 @@ function wp_persian_datepicker_israngemode_property_fix() {
                         // Set the attribute consistently
                         picker.setAttribute('dark-mode', shouldEnableDarkMode ? 'true' : 'false');
                         
-                        // Apply dark mode styles directly if needed
+                        // Apply appropriate mode styles
                         if (shouldEnableDarkMode) {
                             // Apply the dark mode CSS variables from basic.html demo
                             picker.style.setProperty('--jdp-background', '#1e1e2f');
@@ -1184,8 +1219,27 @@ function wp_persian_datepicker_israngemode_property_fix() {
                             picker.style.setProperty('--jdp-today-border-color', '#0891b2');
                             picker.style.setProperty('--jdp-input-focus-border', '#0891b2');
                             picker.style.setProperty('--jdp-input-focus-shadow', '0 0 0 1px #0891b2');
+                        } else {
+                            // Apply light mode CSS variables
+                            picker.style.setProperty('--jdp-background', '#ffffff');
+                            picker.style.setProperty('--jdp-foreground', '#333333');
+                            picker.style.setProperty('--jdp-muted', '#f1f5f9');
+                            picker.style.setProperty('--jdp-muted-foreground', '#64748b');
+                            picker.style.setProperty('--jdp-border', '#e2e8f0');
+                            picker.style.setProperty('--jdp-day-hover-bg', '#f1f5f9');
+                            picker.style.setProperty('--jdp-input-border-color', '#ddd');
+                            picker.style.setProperty('--jdp-input-bg', '#ffffff');
+                            picker.style.setProperty('--jdp-calendar-bg', '#ffffff');
+                            picker.style.setProperty('--jdp-holiday-bg', '#fff1f2');
+                            picker.style.setProperty('--jdp-border-color', '#ddd');
+                            picker.style.setProperty('--jdp-nav-arrow-color', '#505050');
+                            picker.style.setProperty('--jdp-selected-bg', '#2271b1');
+                            picker.style.setProperty('--jdp-hover-bg', 'rgba(34, 113, 177, 0.1)');
+                            picker.style.setProperty('--jdp-today-border-color', '#2271b1');
+                            picker.style.setProperty('--jdp-input-focus-border', '#2271b1');
+                            picker.style.setProperty('--jdp-input-focus-shadow', '0 0 0 1px #2271b1');
                         }
-
+                        
                         // Try to access the internal darkMode property
                         if (picker.__proto__ && picker.__proto__.darkMode !== undefined) {
                             // For prototype-based property
@@ -1304,18 +1358,25 @@ function wp_persian_datepicker_israngemode_property_fix() {
                                                     node.style.setProperty('--jdp-today-border-color', '#0891b2');
                                                     node.style.setProperty('--jdp-input-focus-border', '#0891b2');
                                                     node.style.setProperty('--jdp-input-focus-shadow', '0 0 0 1px #0891b2');
-                                                }
-                                                
-                                                // Try to set the property if accessible
-                                                if (node.__proto__ && node.__proto__.darkMode !== undefined) {
-                                                    node.__proto__.darkMode = shouldEnableDarkMode;
                                                 } else {
-                                                    node.darkMode = shouldEnableDarkMode;
-                                                }
-                                                
-                                                // Call render if available and if component is ready
-                                                if (typeof node.render === 'function' && node.shadowRoot.querySelector('.datepicker-container')) {
-                                                    node.render();
+                                                    // Apply light mode CSS variables
+                                                    node.style.setProperty('--jdp-background', '#ffffff');
+                                                    node.style.setProperty('--jdp-foreground', '#333333');
+                                                    node.style.setProperty('--jdp-muted', '#f1f5f9');
+                                                    node.style.setProperty('--jdp-muted-foreground', '#64748b');
+                                                    node.style.setProperty('--jdp-border', '#e2e8f0');
+                                                    node.style.setProperty('--jdp-day-hover-bg', '#f1f5f9');
+                                                    node.style.setProperty('--jdp-input-border-color', '#ddd');
+                                                    node.style.setProperty('--jdp-input-bg', '#ffffff');
+                                                    node.style.setProperty('--jdp-calendar-bg', '#ffffff');
+                                                    node.style.setProperty('--jdp-holiday-bg', '#fff1f2');
+                                                    node.style.setProperty('--jdp-border-color', '#ddd');
+                                                    node.style.setProperty('--jdp-nav-arrow-color', '#505050');
+                                                    node.style.setProperty('--jdp-selected-bg', '#2271b1');
+                                                    node.style.setProperty('--jdp-hover-bg', 'rgba(34, 113, 177, 0.1)');
+                                                    node.style.setProperty('--jdp-today-border-color', '#2271b1');
+                                                    node.style.setProperty('--jdp-input-focus-border', '#2271b1');
+                                                    node.style.setProperty('--jdp-input-focus-shadow', '0 0 0 1px #2271b1');
                                                 }
                                             } catch (e) {
                                                 console.error('Error setting darkMode on new element:', e);
@@ -1394,18 +1455,25 @@ function wp_persian_datepicker_israngemode_property_fix() {
                                                             nestedPicker.style.setProperty('--jdp-today-border-color', '#0891b2');
                                                             nestedPicker.style.setProperty('--jdp-input-focus-border', '#0891b2');
                                                             nestedPicker.style.setProperty('--jdp-input-focus-shadow', '0 0 0 1px #0891b2');
-                                                        }
-                                                        
-                                                        // Try to set the property if accessible
-                                                        if (nestedPicker.__proto__ && nestedPicker.__proto__.darkMode !== undefined) {
-                                                            nestedPicker.__proto__.darkMode = shouldEnableDarkMode;
                                                         } else {
-                                                            nestedPicker.darkMode = shouldEnableDarkMode;
-                                                        }
-                                                        
-                                                        // Call render if available and component is ready
-                                                        if (typeof nestedPicker.render === 'function' && nestedPicker.shadowRoot.querySelector('.datepicker-container')) {
-                                                            nestedPicker.render();
+                                                            // Apply light mode CSS variables
+                                                            nestedPicker.style.setProperty('--jdp-background', '#ffffff');
+                                                            nestedPicker.style.setProperty('--jdp-foreground', '#333333');
+                                                            nestedPicker.style.setProperty('--jdp-muted', '#f1f5f9');
+                                                            nestedPicker.style.setProperty('--jdp-muted-foreground', '#64748b');
+                                                            nestedPicker.style.setProperty('--jdp-border', '#e2e8f0');
+                                                            nestedPicker.style.setProperty('--jdp-day-hover-bg', '#f1f5f9');
+                                                            nestedPicker.style.setProperty('--jdp-input-border-color', '#ddd');
+                                                            nestedPicker.style.setProperty('--jdp-input-bg', '#ffffff');
+                                                            nestedPicker.style.setProperty('--jdp-calendar-bg', '#ffffff');
+                                                            nestedPicker.style.setProperty('--jdp-holiday-bg', '#fff1f2');
+                                                            nestedPicker.style.setProperty('--jdp-border-color', '#ddd');
+                                                            nestedPicker.style.setProperty('--jdp-nav-arrow-color', '#505050');
+                                                            nestedPicker.style.setProperty('--jdp-selected-bg', '#2271b1');
+                                                            nestedPicker.style.setProperty('--jdp-hover-bg', 'rgba(34, 113, 177, 0.1)');
+                                                            nestedPicker.style.setProperty('--jdp-today-border-color', '#2271b1');
+                                                            nestedPicker.style.setProperty('--jdp-input-focus-border', '#2271b1');
+                                                            nestedPicker.style.setProperty('--jdp-input-focus-shadow', '0 0 0 1px #2271b1');
                                                         }
                                                     } catch (e) {
                                                         console.error('Error setting darkMode on nested element:', e);
@@ -1537,8 +1605,70 @@ function wp_persian_datepicker_direct_api_fix() {
                             console.log('Updated instance.options.isRangeMode and called update method');
                         }
                         
+                        // If the instance also has direct access to dark mode, update it
+                        var darkMode = picker.getAttribute('darkmode') || picker.getAttribute('dark-mode');
+                        if (darkMode !== null) {
+                            var shouldEnableDarkMode = darkMode === 'true' || darkMode === '1' || darkMode === true;
+                            
+                            // Update darkMode in the instance if possible
+                            if (typeof instance.setDarkMode === 'function') {
+                                instance.setDarkMode(shouldEnableDarkMode);
+                                console.log('Called setDarkMode on instance');
+                            } else if (typeof instance.setOptions === 'function') {
+                                instance.setOptions({ darkMode: shouldEnableDarkMode });
+                                console.log('Set darkMode via setOptions on instance');
+                            } else if (instance.options) {
+                                instance.options.darkMode = shouldEnableDarkMode;
+                                if (instance.updateOptions) instance.updateOptions();
+                                else if (instance.update) instance.update();
+                                console.log('Updated instance.options.darkMode property');
+                            }
+                            
+                            // Also set the CSS variables directly
+                            if (shouldEnableDarkMode) {
+                                // Dark mode
+                                picker.style.setProperty('--jdp-background', '#1e1e2f');
+                                picker.style.setProperty('--jdp-foreground', '#e2e8f0');
+                                picker.style.setProperty('--jdp-muted', '#334155');
+                                picker.style.setProperty('--jdp-muted-foreground', '#94a3b8');
+                                picker.style.setProperty('--jdp-border', '#475569');
+                                picker.style.setProperty('--jdp-day-hover-bg', '#334155');
+                                picker.style.setProperty('--jdp-input-border-color', '#475569');
+                                picker.style.setProperty('--jdp-input-bg', '#1e1e2f');
+                                picker.style.setProperty('--jdp-calendar-bg', '#1e1e2f');
+                                picker.style.setProperty('--jdp-holiday-bg', '#3f1e2e');
+                                picker.style.setProperty('--jdp-border-color', '#475569');
+                                picker.style.setProperty('--jdp-nav-arrow-color', '#e2e8f0');
+                                picker.style.setProperty('--jdp-selected-bg', '#0891b2');
+                                picker.style.setProperty('--jdp-hover-bg', 'rgba(8, 145, 178, 0.2)');
+                                picker.style.setProperty('--jdp-today-border-color', '#0891b2');
+                                picker.style.setProperty('--jdp-input-focus-border', '#0891b2');
+                                picker.style.setProperty('--jdp-input-focus-shadow', '0 0 0 1px #0891b2');
+                            } else {
+                                // Light mode
+                                picker.style.setProperty('--jdp-background', '#ffffff');
+                                picker.style.setProperty('--jdp-foreground', '#333333');
+                                picker.style.setProperty('--jdp-muted', '#f1f5f9');
+                                picker.style.setProperty('--jdp-muted-foreground', '#64748b');
+                                picker.style.setProperty('--jdp-border', '#e2e8f0');
+                                picker.style.setProperty('--jdp-day-hover-bg', '#f1f5f9');
+                                picker.style.setProperty('--jdp-input-border-color', '#ddd');
+                                picker.style.setProperty('--jdp-input-bg', '#ffffff');
+                                picker.style.setProperty('--jdp-calendar-bg', '#ffffff');
+                                picker.style.setProperty('--jdp-holiday-bg', '#fff1f2');
+                                picker.style.setProperty('--jdp-border-color', '#ddd');
+                                picker.style.setProperty('--jdp-nav-arrow-color', '#505050');
+                                picker.style.setProperty('--jdp-selected-bg', '#2271b1');
+                                picker.style.setProperty('--jdp-hover-bg', 'rgba(34, 113, 177, 0.1)');
+                                picker.style.setProperty('--jdp-today-border-color', '#2271b1');
+                                picker.style.setProperty('--jdp-input-focus-border', '#2271b1');
+                                picker.style.setProperty('--jdp-input-focus-shadow', '0 0 0 1px #2271b1');
+                            }
+                        }
+                    }
+                    
                     // Method 2: Use the shadowRoot to look for the base element and its instance
-                    } else if (picker.shadowRoot) {
+                    else if (picker.shadowRoot) {
                         var baseElement = picker.shadowRoot.querySelector('.datepicker-container');
                         
                         if (baseElement && baseElement._datepicker) {

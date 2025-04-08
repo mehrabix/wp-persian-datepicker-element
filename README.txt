@@ -99,4 +99,4 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 == مشارکت ==
 
-مشارکت شما در بهبود این افزونه بسیار ارزشمند است. شما می‌توانید از طریق [مخزن گیت‌هاب](https://github.com/yourusername/wp-persian-datepicker-element) در توسعه این افزونه مشارکت کنید. 
+مشارکت شما در بهبود این افزونه بسیار ارزشمند است. شما می‌توانید از طریق [مخزن گیت‌هاب](https://github.com/mehrabix/wp-persian-datepicker-element) در توسعه این افزونه مشارکت کنید. 
