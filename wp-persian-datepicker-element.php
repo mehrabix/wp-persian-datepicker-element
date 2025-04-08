@@ -875,13 +875,7 @@ function wp_persian_datepicker_direct_property_fix() {
             
             // Find all datepicker elements
             var datepickers = document.querySelectorAll('persian-datepicker-element');
-            
-            if (datepickers.length === 0) {
-                console.log('No datepickers found, will try again later');
-                setTimeout(fixDatepickers, 1000); // Try again in 1 second
-                return;
-            }
-            
+         
             console.log('Found ' + datepickers.length + ' datepickers to process');
             
             // Process each datepicker to ensure properties are properly set
@@ -1073,11 +1067,7 @@ function wp_persian_datepicker_israngemode_property_fix() {
             // Find all datepicker elements
             var datepickers = document.querySelectorAll('persian-datepicker-element');
             
-            if (datepickers.length === 0) {
-                console.log('No datepickers found for property fixes');
-                return;
-            }
-            
+        =
             console.log('Found ' + datepickers.length + ' datepickers to apply property fixes');
             
             // Add a global safety wrapper for the render method to prevent the innerHTML error
@@ -1459,12 +1449,7 @@ function wp_persian_datepicker_direct_api_fix() {
             
             // Find all datepicker elements
             var datepickers = document.querySelectorAll('persian-datepicker-element');
-            
-            if (datepickers.length === 0) {
-                console.log('No datepickers found for direct API fix');
-                return;
-            }
-            
+          
             console.log('Found ' + datepickers.length + ' datepickers to apply direct API fix');
             
             // Process each datepicker to directly manipulate the internal instance

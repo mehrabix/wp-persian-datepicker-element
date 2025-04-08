@@ -1,63 +1,130 @@
-WP Persian Datepicker Element - Installation Guide
-==============================================
+## راهنمای نصب افزونه تقویم شمسی وردپرس
 
-Thank you for downloading the WP Persian Datepicker Element plugin!
+### پیش‌نیازها
 
-To properly set up the plugin after downloading, please follow these steps:
+قبل از نصب افزونه، لطفاً از موارد زیر اطمینان حاصل کنید:
 
-1. Make sure the plugin files are in a directory called 'wp-persian-datepicker-element'
-   inside your WordPress plugins directory (wp-content/plugins/).
+- وردپرس نسخه 5.0 یا بالاتر
+- پی‌اچ‌پی نسخه 7.0 یا بالاتر
+- مرورگر مدرن با پشتیبانی از وب‌کامپوننت‌ها (کروم، فایرفاکس، سافاری یا اج)
+- تم سازگار با وردپرس 5.0 یا بالاتر
 
-2. Copy the necessary files from the original component's dist folder:
-   - Copy persian-datepicker-element.min.js to assets/dist/
-   - If needed, copy any other necessary files from the dist/data folder
+### روش‌های نصب
 
-3. Activate the plugin through the WordPress admin interface.
+#### روش اول: نصب از طریق پنل مدیریت وردپرس (آسان‌ترین روش)
 
-4. Configure the default settings under Settings > Persian Date Picker.
+1. وارد پنل مدیریت وردپرس خود شوید.
+2. به بخش **افزونه‌ها > افزودن** بروید.
+3. در کادر جستجو عبارت "تقویم شمسی" یا "Persian Datepicker" را وارد کنید.
+4. افزونه "تقویم شمسی وردپرس" را پیدا کرده و روی دکمه **نصب** کلیک کنید.
+5. پس از نصب، روی دکمه **فعال‌سازی** کلیک کنید.
 
-5. Start using the datepicker through shortcodes, widgets, or the Gutenberg block.
+#### روش دوم: نصب دستی (آپلود فایل زیپ)
 
-Folder Structure:
-----------------
-wp-persian-datepicker-element/
-├── admin/
-│   ├── css/
-│   │   └── wp-persian-datepicker-admin.css
-│   ├── js/
-│   │   └── wp-persian-datepicker-admin.js
-│   └── class-wp-persian-datepicker-admin.php
-├── assets/
-│   ├── css/
-│   │   └── wp-persian-datepicker-element.css
-│   ├── dist/
-│   │   └── persian-datepicker-element.min.js (copy from original component)
-│   └── js/
-│       └── frontend/
-│           └── wp-integration.js
-├── includes/
-│   ├── class-wp-persian-datepicker-loader.php
-│   ├── class-wp-persian-datepicker-scripts.php
-│   ├── class-wp-persian-datepicker-shortcode.php
-│   └── class-wp-persian-datepicker-widget.php
-├── index.php
-├── README.txt
-└── wp-persian-datepicker-element.php
+1. فایل زیپ افزونه را از [مخزن افزونه‌های وردپرس](https://wordpress.org/plugins/wp-persian-datepicker-element/) دانلود کنید.
+2. وارد پنل مدیریت وردپرس خود شوید.
+3. به بخش **افزونه‌ها > افزودن > بارگذاری افزونه** بروید.
+4. دکمه **انتخاب فایل** را کلیک کنید و فایل زیپ دانلود شده را انتخاب کنید.
+5. روی دکمه **نصب** کلیک کنید.
+6. پس از نصب، روی دکمه **فعال‌سازی** کلیک کنید.
 
-Usage Examples:
---------------
-1. Basic shortcode:
-   [persian_datepicker]
+#### روش سوم: نصب از طریق FTP
 
-2. Shortcode with custom attributes:
-   [persian_datepicker placeholder="تاریخ تولد" format="YYYY/MM/DD" show_holidays="true"]
+1. فایل زیپ افزونه را از [مخزن افزونه‌های وردپرس](https://wordpress.org/plugins/wp-persian-datepicker-element/) دانلود کنید.
+2. فایل زیپ را روی کامپیوتر خود استخراج کنید.
+3. با استفاده از یک نرم‌افزار FTP (مانند FileZilla) به سرور وب‌سایت خود متصل شوید.
+4. پوشه استخراج شده `wp-persian-datepicker-element` را به مسیر `/wp-content/plugins/` در سرور خود آپلود کنید.
+5. سپس به پنل مدیریت وردپرس خود بروید و به بخش **افزونه‌ها** مراجعه کنید.
+6. افزونه "تقویم شمسی وردپرس" را پیدا کرده و روی دکمه **فعال‌سازی** کلیک کنید.
 
-3. Widget:
-   Add the "Persian Date Picker" widget to any widget area through Appearance > Widgets.
+### پیکربندی اولیه
 
-4. Gutenberg Block:
-   Search for "Persian Date Picker" in the block inserter.
+پس از نصب و فعال‌سازی افزونه، می‌توانید تنظیمات پیش‌فرض آن را انجام دهید:
 
-For more information and customization options, please see README.txt or visit our website.
+1. به بخش **تنظیمات > تقویم شمسی** در پنل مدیریت وردپرس بروید.
+2. تنظیمات پیش‌فرض را بر اساس نیاز خود تغییر دهید:
+   - متن راهنما (placeholder) پیش‌فرض
+   - قالب تاریخ پیش‌فرض
+   - نمایش تعطیلات
+   - راست-به-چپ (RTL)
+   - حالت تاریک (دارک مود)
+   - انواع تعطیلات
+   - حالت انتخاب محدوده تاریخ
+3. روی دکمه **ذخیره تغییرات** کلیک کنید.
 
-Need help? Contact us at support@example.com 
+### استفاده از افزونه
+
+#### استفاده از شورت‌کد
+
+ساده‌ترین روش برای استفاده از تقویم شمسی، استفاده از شورت‌کد در نوشته‌ها یا برگه‌های وردپرس است:
+
+```
+[persian_datepicker]
+```
+
+برای استفاده از تنظیمات سفارشی می‌توانید از ویژگی‌های مختلف در شورت‌کد استفاده کنید:
+
+```
+[persian_datepicker placeholder="تاریخ تولد" format="YYYY/MM/DD" show_holidays="true" rtl="true"]
+```
+
+#### استفاده در قالب‌های PHP
+
+برای استفاده از تقویم شمسی در قالب‌های PHP، می‌توانید از تابع `do_shortcode` استفاده کنید:
+
+```php
+<?php echo do_shortcode('[persian_datepicker]'); ?>
+```
+
+#### ادغام با افزونه فرم تماس 7 (Contact Form 7)
+
+برای استفاده از تقویم شمسی در فرم‌های Contact Form 7، می‌توانید از کلاس `persian-datepicker` استفاده کنید:
+
+```
+[text* birthday class:persian-datepicker data-placeholder="تاریخ تولد" data-format="YYYY/MM/DD"]
+```
+
+### عیب‌یابی و رفع مشکلات
+
+اگر مشکلی در نصب یا استفاده از افزونه دارید، موارد زیر را بررسی کنید:
+
+1. **مشکل عدم نمایش تقویم:**
+   - اطمینان حاصل کنید که JavaScript در مرورگر شما فعال است.
+   - از مرورگر مدرن استفاده می‌کنید.
+   - افزونه‌های مسدودکننده (مثل AdBlocker) موقتاً غیرفعال کنید.
+
+2. **مشکل سازگاری با سایر افزونه‌ها:**
+   - همه افزونه‌ها را به‌روزرسانی کنید.
+   - افزونه‌ها را یکی‌یکی غیرفعال کنید تا تداخل احتمالی را پیدا کنید.
+
+3. **مشکل نمایش در موبایل:**
+   - اطمینان حاصل کنید که از تم واکنش‌گرا استفاده می‌کنید.
+   - کش مرورگر را پاک کنید.
+
+4. **مشکل در انتخاب تاریخ:**
+   - بررسی کنید که فرمت تاریخ به درستی تنظیم شده باشد.
+   - حافظه پنهان (cache) سایت را پاک کنید.
+
+### فایل‌های زبانی
+
+افزونه تقویم شمسی از چند زبان پشتیبانی می‌کند. فایل‌های زبانی در پوشه `languages` قرار دارند. اگر می‌خواهید ترجمه‌ای را به زبان دیگری اضافه کنید، می‌توانید:
+
+1. فایل‌های `wp-persian-datepicker-element-xx_XX.po` و `wp-persian-datepicker-element-xx_XX.mo` را ایجاد کنید (xx_XX کد زبان هدف است).
+2. با استفاده از نرم‌افزار Poedit فایل‌ها را ویرایش کنید.
+3. فایل‌های ترجمه را در پوشه `wp-content/languages/plugins/` قرار دهید.
+
+### پشتیبانی
+
+اگر نیاز به کمک دارید، می‌توانید از روش‌های زیر استفاده کنید:
+
+- مراجعه به [انجمن پشتیبانی](https://wordpress.org/support/plugin/wp-persian-datepicker-element/) در وردپرس
+- ارسال ایمیل به آدرس پشتیبانی: support@example.com
+- بازدید از [سایت رسمی افزونه](https://example.com/persian-datepicker) برای مشاهده مستندات بیشتر
+
+### الزامات سرور
+
+- **وردپرس:** نسخه 5.0 یا بالاتر
+- **PHP:** نسخه 7.0 یا بالاتر
+- **MySQL:** نسخه 5.6 یا بالاتر
+- **وب سرور:** Apache یا Nginx
+- **سایر الزامات:** فعال بودن mod_rewrite در Apache 
