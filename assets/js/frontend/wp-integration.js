@@ -451,6 +451,8 @@
         
         // Apply default options from WordPress settings
         if (typeof wpPersianDatepickerOptions !== 'undefined') {
+            console.log('WP Persian Datepicker Options:', wpPersianDatepickerOptions);
+            
             // Only apply if attribute is not already set
             if (!datepicker.hasAttribute('placeholder') && wpPersianDatepickerOptions.placeholder) {
                 datepicker.setAttribute('placeholder', wpPersianDatepickerOptions.placeholder);
@@ -461,11 +463,13 @@
             }
             
             if (!datepicker.hasAttribute('rtl') && typeof wpPersianDatepickerOptions.rtl !== 'undefined') {
-                datepicker.setAttribute('rtl', wpPersianDatepickerOptions.rtl ? 'true' : 'false');
+                const rtlValue = wpPersianDatepickerOptions.rtl === '1' || wpPersianDatepickerOptions.rtl === 1 || wpPersianDatepickerOptions.rtl === true;
+                datepicker.setAttribute('rtl', rtlValue ? 'true' : 'false');
             }
             
             if (!datepicker.hasAttribute('show-holidays') && typeof wpPersianDatepickerOptions.show_holidays !== 'undefined') {
-                datepicker.setAttribute('show-holidays', wpPersianDatepickerOptions.show_holidays ? 'true' : 'false');
+                const showHolidaysValue = wpPersianDatepickerOptions.show_holidays === '1' || wpPersianDatepickerOptions.show_holidays === 1 || wpPersianDatepickerOptions.show_holidays === true;
+                datepicker.setAttribute('show-holidays', showHolidaysValue ? 'true' : 'false');
             }
             
             if (!datepicker.hasAttribute('holiday-types') && wpPersianDatepickerOptions.holiday_types) {
@@ -473,11 +477,21 @@
             }
             
             if (!datepicker.hasAttribute('dark-mode') && typeof wpPersianDatepickerOptions.dark_mode !== 'undefined') {
-                datepicker.setAttribute('dark-mode', wpPersianDatepickerOptions.dark_mode ? 'true' : 'false');
+                const darkModeValue = wpPersianDatepickerOptions.dark_mode === '1' || wpPersianDatepickerOptions.dark_mode === 1 || wpPersianDatepickerOptions.dark_mode === true;
+                datepicker.setAttribute('dark-mode', darkModeValue ? 'true' : 'false');
             }
             
             if (!datepicker.hasAttribute('range-mode') && typeof wpPersianDatepickerOptions.range_mode !== 'undefined') {
-                datepicker.setAttribute('range-mode', wpPersianDatepickerOptions.range_mode ? 'true' : 'false');
+                // Log the raw value for debugging
+                console.log('Range Mode Raw Value:', wpPersianDatepickerOptions.range_mode, 'Type:', typeof wpPersianDatepickerOptions.range_mode);
+                
+                // Explicitly convert to boolean using strict comparison
+                const rangeModeValue = wpPersianDatepickerOptions.range_mode === '1' || wpPersianDatepickerOptions.range_mode === 1 || wpPersianDatepickerOptions.range_mode === true;
+                console.log('Range Mode Converted Value:', rangeModeValue);
+                
+                // Set the attribute as string 'true' or 'false'
+                datepicker.setAttribute('range-mode', rangeModeValue ? 'true' : 'false');
+                console.log('Range Mode Attribute Set:', datepicker.getAttribute('range-mode'));
             }
         }
     }

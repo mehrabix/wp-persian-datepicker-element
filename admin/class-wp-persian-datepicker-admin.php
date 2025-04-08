@@ -197,7 +197,11 @@ class WP_Persian_Datepicker_Admin {
      */
     public function render_range_mode_field() {
         $options = get_option('wp_persian_datepicker_options');
-        $range_mode = isset($options['range_mode']) ? $options['range_mode'] : 0;
+        // Convert to a boolean value for better compatibility
+        $range_mode = isset($options['range_mode']) && ($options['range_mode'] == 1 || $options['range_mode'] === '1' || $options['range_mode'] === true);
+        
+        echo '<!-- Debug: Range Mode Value in DB: ' . (isset($options['range_mode']) ? var_export($options['range_mode'], true) : 'not set') . ' -->';
+        echo '<!-- Debug: Range Mode Converted Value: ' . var_export($range_mode, true) . ' -->';
         
         echo '<input type="checkbox" id="wp_persian_datepicker_range_mode" name="wp_persian_datepicker_options[range_mode]" value="1" ' . checked(1, $range_mode, false) . ' />';
         echo '<label for="wp_persian_datepicker_range_mode">' . esc_html__('Enable date range selection mode', 'wp-persian-datepicker-element') . '</label>';

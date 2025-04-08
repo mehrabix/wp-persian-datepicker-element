@@ -24,15 +24,18 @@ class WP_Persian_Datepicker_Shortcode {
         // Get global plugin options
         $options = get_option('wp_persian_datepicker_options', array());
         
+        // Debug output to check the range_mode value in options
+        // echo "<!-- Debug: Range Mode in Options: " . (isset($options['range_mode']) ? $options['range_mode'] : 'not set') . " -->";
+        
         // Define default attributes
         $default_atts = array(
             'placeholder' => isset($options['placeholder']) ? $options['placeholder'] : 'انتخاب تاریخ',
             'format' => isset($options['format']) ? $options['format'] : 'YYYY/MM/DD',
-            'show_holidays' => isset($options['show_holidays']) ? $options['show_holidays'] : true,
-            'rtl' => isset($options['rtl']) ? $options['rtl'] : true,
-            'dark_mode' => isset($options['dark_mode']) ? $options['dark_mode'] : false,
+            'show_holidays' => isset($options['show_holidays']) ? filter_var($options['show_holidays'], FILTER_VALIDATE_BOOLEAN) : true,
+            'rtl' => isset($options['rtl']) ? filter_var($options['rtl'], FILTER_VALIDATE_BOOLEAN) : true,
+            'dark_mode' => isset($options['dark_mode']) ? filter_var($options['dark_mode'], FILTER_VALIDATE_BOOLEAN) : false,
             'holiday_types' => isset($options['holiday_types']) ? $options['holiday_types'] : 'Iran,International',
-            'range_mode' => isset($options['range_mode']) ? $options['range_mode'] : false,
+            'range_mode' => isset($options['range_mode']) ? filter_var($options['range_mode'], FILTER_VALIDATE_BOOLEAN) : false,
             'class' => '',
             'id' => 'pdp-' . uniqid(),
             'name' => '',
@@ -119,6 +122,25 @@ class WP_Persian_Datepicker_Shortcode {
                 continue;
             }
             
+            // Special handling for range_mode attribute to ensure it works correctly
+            if ($key === 'range_mode') {
+                // Debug output
+                // echo "<!-- Range Mode Value: " . var_export($value, true) . " -->";
+                
+                // Make sure it's converted to a proper boolean
+                $value = filter_var($value, FILTER_VALIDATE_BOOLEAN);
+                
+                // Add the attribute only if true (ensures it's explicitly set always)
+                if ($value === true) {
+                    $attributes[$key_dash] = true;
+                } else {
+                    // For false values, explicitly set "false" as a string
+                    $attributes[$key_dash] = 'false';
+                }
+                
+                continue;
+            }
+            
             // Handle boolean attributes properly for HTML5 custom elements
             if (is_bool($value)) {
                 if ($value === true) {
@@ -183,6 +205,12 @@ class WP_Persian_Datepicker_Shortcode {
             if ($value === true) {
                 // HTML5 boolean attribute (just the name, no value)
                 $attr_str .= ' ' . esc_attr($key);
+            } else if ($key === 'range-mode') {
+                // Ensure range-mode is explicitly set with a string value
+                $attr_str .= sprintf(' %s="%s"', esc_attr($key), $value === true || $value === 'true' ? 'true' : 'false');
+            } else if (in_array(str_replace('-', '_', $key), $bool_attrs)) {
+                // For other boolean attributes also ensure explicit value
+                $attr_str .= sprintf(' %s="%s"', esc_attr($key), $value === true || $value === 'true' ? 'true' : 'false');
             } else {
                 // Regular attribute with value
                 $attr_str .= sprintf(' %s="%s"', esc_attr($key), esc_attr($value));

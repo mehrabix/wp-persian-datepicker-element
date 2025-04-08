@@ -292,9 +292,16 @@ class WP_Persian_Datepicker_Element {
                 'format' => 'YYYY/MM/DD',
                 'holiday_types' => 'Iran,International',
                 'dark_mode' => 0,
-                'range_mode' => 0,
+                'range_mode' => 0, // Explicitly set to 0 (false)
             );
             update_option('wp_persian_datepicker_options', $default_options);
+        } else {
+            // If options already exist, ensure range_mode is set with a valid value
+            $existing_options = get_option('wp_persian_datepicker_options');
+            if (!isset($existing_options['range_mode'])) {
+                $existing_options['range_mode'] = 0; // Set default to false if not set
+                update_option('wp_persian_datepicker_options', $existing_options);
+            }
         }
     }
 
