@@ -200,9 +200,6 @@ class WP_Persian_Datepicker_Admin {
         // Convert to a boolean value for better compatibility
         $range_mode = isset($options['range_mode']) && ($options['range_mode'] == 1 || $options['range_mode'] === '1' || $options['range_mode'] === true);
         
-        echo '<!-- Debug: Range Mode Value in DB: ' . (isset($options['range_mode']) ? var_export($options['range_mode'], true) : 'not set') . ' -->';
-        echo '<!-- Debug: Range Mode Converted Value: ' . var_export($range_mode, true) . ' -->';
-        
         echo '<input type="checkbox" id="wp_persian_datepicker_range_mode" name="wp_persian_datepicker_options[range_mode]" value="1" ' . checked(1, $range_mode, false) . ' />';
         echo '<label for="wp_persian_datepicker_range_mode">' . esc_html__('Enable date range selection mode', 'wp-persian-datepicker-element') . '</label>';
     }
@@ -216,9 +213,6 @@ class WP_Persian_Datepicker_Admin {
      */
     public function validate_options($input) {
         $sanitized_input = array();
-        
-        // Debug options being saved
-        error_log('WP Persian Datepicker: Validating options: ' . print_r($input, true));
         
         // Sanitize text fields
         if (isset($input['placeholder'])) {
@@ -272,9 +266,6 @@ class WP_Persian_Datepicker_Admin {
         if (isset($_POST['submit']) && isset($_POST['wp_persian_datepicker_options_nonce'])) {
             // Verify nonce
             if (check_admin_referer('wp_persian_datepicker_options_action', 'wp_persian_datepicker_options_nonce')) {
-                // Debug: Check what's being submitted
-                error_log('WP Persian Datepicker: Form submitted with data: ' . print_r($_POST['wp_persian_datepicker_options'], true));
-                
                 // Process form data
                 $new_options = array();
                 
@@ -307,9 +298,6 @@ class WP_Persian_Datepicker_Admin {
                 esc_html__('Settings saved.', 'wp-persian-datepicker-element'),
                 'updated'
             );
-                
-                // Debug: Check what's being saved
-                error_log('WP Persian Datepicker: Saved options: ' . print_r($new_options, true));
             }
         }
         
@@ -416,15 +404,7 @@ class WP_Persian_Datepicker_Admin {
                             if (isset($options['rtl'])) $attrs[] = 'rtl="' . (empty($options['rtl']) ? 'false' : 'true') . '"';
                             if (isset($options['dark_mode'])) $attrs[] = 'darkmode="' . (empty($options['dark_mode']) ? 'false' : 'true') . '"';
                             if (!empty($options['holiday_types'])) $attrs[] = 'holiday-types="' . esc_attr($options['holiday_types']) . '"';
-
-                            // Special handling for range_mode to ensure it's always explicitly set
-                            // This is critical as web components need explicit boolean attributes
                             $attrs[] = 'range-mode="' . (isset($options['range_mode']) && !empty($options['range_mode']) ? 'true' : 'false') . '"';
-
-                            // Debug output
-                            error_log('WP Persian Datepicker Admin: Setting range-mode attribute to: ' . 
-                                (isset($options['range_mode']) && !empty($options['range_mode']) ? 'true' : 'false') . 
-                                ' (option value: ' . (isset($options['range_mode']) ? $options['range_mode'] : 'not set') . ')');
 
                             $dark_class = !empty($options['dark_mode']) ? ' dark-theme' : '';
                             ?>
@@ -450,51 +430,10 @@ class WP_Persian_Datepicker_Admin {
                     $this->display_integration_guide_fa();
                 } else {
                     $this->display_integration_guide_en();
-            }
-            ?>
+                }
+                ?>
+            </div>
         </div>
-        </div>
-        <div id="wp-pd-debug" style="margin-top: 30px; padding: 15px; border: 1px solid #ccc; background: #f8f8f8; display: none;">
-            <h3>Debug Information</h3>
-            <pre id="wp-pd-debug-options"><?php echo esc_html(print_r($options, true)); ?></pre>
-            <div id="wp-pd-debug-current"></div>
-        </div>
-        <p><a href="#" id="wp-pd-toggle-debug">Toggle Debug Information</a></p>
-        <script>
-        jQuery(document).ready(function($) {
-            console.log('Settings page loaded');
-            console.log('Current options:', <?php echo json_encode($options); ?>);
-            
-            // Log checkbox states for debugging
-            console.log('Checkbox states:', {
-                show_holidays: $('#wp_persian_datepicker_show_holidays').is(':checked'),
-                rtl: $('#wp_persian_datepicker_rtl').is(':checked'),
-                dark_mode: $('#wp_persian_datepicker_dark_mode').is(':checked'),
-                range_mode: $('#wp_persian_datepicker_range_mode').is(':checked')
-            });
-            
-            // Toggle debug info
-            $('#wp-pd-toggle-debug').on('click', function(e) {
-                e.preventDefault();
-                $('#wp-pd-debug').toggle();
-            });
-            
-            // Update debug info when form changes
-            $('input[name^="wp_persian_datepicker_options"]').on('change input', function() {
-                var debugInfo = '<h4>Current Form Values:</h4><ul>';
-                debugInfo += '<li>Placeholder: ' + $('#wp_persian_datepicker_placeholder').val() + '</li>';
-                debugInfo += '<li>Format: ' + $('#wp_persian_datepicker_format').val() + '</li>';
-                debugInfo += '<li>Show Holidays: ' + $('#wp_persian_datepicker_show_holidays').is(':checked') + '</li>';
-                debugInfo += '<li>RTL: ' + $('#wp_persian_datepicker_rtl').is(':checked') + '</li>';
-                debugInfo += '<li>Dark Mode: ' + $('#wp_persian_datepicker_dark_mode').is(':checked') + '</li>';
-                debugInfo += '<li>Holiday Types: ' + $('#wp_persian_datepicker_holiday_types').val() + '</li>';
-                debugInfo += '<li>Range Mode: ' + $('#wp_persian_datepicker_range_mode').is(':checked') + '</li>';
-                debugInfo += '</ul>';
-                
-                $('#wp-pd-debug-current').html(debugInfo);
-            });
-        });
-        </script>
         <?php
     }
     

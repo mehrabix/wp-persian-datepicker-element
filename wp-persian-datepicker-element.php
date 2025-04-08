@@ -1080,8 +1080,60 @@ function wp_persian_datepicker_israngemode_property_fix() {
             
             console.log('Found ' + datepickers.length + ' datepickers to apply property fixes');
             
+            // Add a global safety wrapper for the render method to prevent the innerHTML error
+            function wrapRenderMethodWithSafety(element) {
+                if (!element || typeof element.render !== 'function') return false;
+                
+                var originalRender = element.render;
+                element.render = function() {
+                    try {
+                        // Make sure the container exists before rendering
+                        if (this.shadowRoot && this.shadowRoot.querySelector('.datepicker-container')) {
+                            return originalRender.apply(this, arguments);
+                        } else {
+                            console.warn('Safety wrapper prevented render on incomplete component');
+                            return false;
+                        }
+                    } catch (e) {
+                        console.error('Error in wrapped render method:', e);
+                        return false;
+                    }
+                };
+                return true;
+            }
+            
             // Process each datepicker to set the internal properties
             datepickers.forEach(function(picker, index) {
+                // First, apply the render safety wrapper
+                if (wrapRenderMethodWithSafety(picker)) {
+                    console.log('Added render safety wrapper to picker #' + index);
+                }
+                
+                // Check if the component is fully initialized
+                if (!picker.shadowRoot || !picker.shadowRoot.querySelector('.datepicker-container')) {
+                    console.log('Picker #' + index + ' is not fully initialized, attempting to initialize...');
+                    
+                    // Try to initialize the component if possible
+                    if (typeof picker.initializeComponent === 'function') {
+                        try {
+                            picker.initializeComponent();
+                            console.log('Called initializeComponent on picker #' + index);
+                        } catch (e) {
+                            console.error('Error initializing component:', e);
+                        }
+                    }
+                    
+                    // Or try the connectedCallback as a fallback
+                    if (!picker.shadowRoot && typeof picker.connectedCallback === 'function') {
+                        try {
+                            picker.connectedCallback();
+                            console.log('Called connectedCallback on picker #' + index);
+                        } catch (e) {
+                            console.error('Error calling connectedCallback:', e);
+                        }
+                    }
+                }
+                
                 // Handle range mode property
                 var rangeMode = picker.getAttribute('range-mode');
                 if (rangeMode !== null) {
@@ -1167,10 +1219,16 @@ function wp_persian_datepicker_israngemode_property_fix() {
                     }
                 }
                 
-                // Also try to force component rendering
-                if (typeof picker.render === 'function') {
-                    picker.render();
-                    console.log('Called render method on datepicker #' + index);
+                // Also try to force component rendering, but only if it's fully initialized
+                if (typeof picker.render === 'function' && picker.shadowRoot && picker.shadowRoot.querySelector('.datepicker-container')) {
+                    try {
+                        picker.render();
+                        console.log('Called render method on datepicker #' + index);
+                    } catch (e) {
+                        console.error('Error rendering datepicker #' + index + ':', e);
+                    }
+                } else {
+                    console.log('Skipped render call on picker #' + index + ' (not fully initialized)');
                 }
                 
                 // Alternatively, try to force a property update event
@@ -1191,6 +1249,9 @@ function wp_persian_datepicker_israngemode_property_fix() {
                                 if (node.tagName && node.tagName.toLowerCase() === 'persian-datepicker-element') {
                                     console.log('New datepicker detected, applying property fixes');
                                     
+                                    // Add safety wrapper to prevent render errors
+                                    wrapRenderMethodWithSafety(node);
+                                    
                                     // Apply range mode fix if needed
                                     var rangeMode = node.getAttribute('range-mode');
                                     if (rangeMode !== null) {
@@ -1199,6 +1260,12 @@ function wp_persian_datepicker_israngemode_property_fix() {
                                         // Wait a small amount of time for the component to initialize
                                         setTimeout(function() {
                                             try {
+                                                // Check first if the component is initialized
+                                                if (!node.shadowRoot || !node.shadowRoot.querySelector('.datepicker-container')) {
+                                                    console.log('New datepicker not fully initialized, skipping render');
+                                                    return;
+                                                }
+                                                
                                                 if (node.__proto__ && node.__proto__.isRangeMode !== undefined) {
                                                     node.__proto__.isRangeMode = shouldEnableRangeMode;
                                                 } else {
@@ -1207,7 +1274,7 @@ function wp_persian_datepicker_israngemode_property_fix() {
                                             } catch (e) {
                                                 console.error('Error setting isRangeMode on new element:', e);
                                             }
-                                        }, 100);
+                                        }, 200);
                                     }
                                     
                                     // Apply dark mode fix if needed
@@ -1218,6 +1285,12 @@ function wp_persian_datepicker_israngemode_property_fix() {
                                         // Wait a small amount of time for the component to initialize
                                         setTimeout(function() {
                                             try {
+                                                // Check if component is initialized before proceeding
+                                                if (!node.shadowRoot) {
+                                                    console.log('New datepicker shadowRoot not ready, skipping dark mode fixes');
+                                                    return;
+                                                }
+                                                
                                                 // Set the attribute consistently
                                                 node.setAttribute('dark-mode', shouldEnableDarkMode ? 'true' : 'false');
                                                 
@@ -1250,14 +1323,14 @@ function wp_persian_datepicker_israngemode_property_fix() {
                                                     node.darkMode = shouldEnableDarkMode;
                                                 }
                                                 
-                                                // Call render if available
-                                                if (typeof node.render === 'function') {
+                                                // Call render if available and if component is ready
+                                                if (typeof node.render === 'function' && node.shadowRoot.querySelector('.datepicker-container')) {
                                                     node.render();
                                                 }
                                             } catch (e) {
                                                 console.error('Error setting darkMode on new element:', e);
                                             }
-                                        }, 100);
+                                        }, 200);
                                     }
                                     
                                 } else if (node.querySelectorAll) {
@@ -1268,6 +1341,9 @@ function wp_persian_datepicker_israngemode_property_fix() {
                                         
                                         // Apply fix to each nested picker
                                         nestedPickers.forEach(function(nestedPicker) {
+                                            // Add safety wrapper
+                                            wrapRenderMethodWithSafety(nestedPicker);
+                                            
                                             // Apply range mode fix if needed
                                             var rangeMode = nestedPicker.getAttribute('range-mode');
                                             if (rangeMode !== null) {
@@ -1275,6 +1351,12 @@ function wp_persian_datepicker_israngemode_property_fix() {
                                                 
                                                 setTimeout(function() {
                                                     try {
+                                                        // Check if component is initialized
+                                                        if (!nestedPicker.shadowRoot || !nestedPicker.shadowRoot.querySelector('.datepicker-container')) {
+                                                            console.log('Nested picker not initialized, skipping isRangeMode fix');
+                                                            return;
+                                                        }
+                                                        
                                                         if (nestedPicker.__proto__ && nestedPicker.__proto__.isRangeMode !== undefined) {
                                                             nestedPicker.__proto__.isRangeMode = shouldEnableRangeMode;
                                                         } else {
@@ -1283,7 +1365,7 @@ function wp_persian_datepicker_israngemode_property_fix() {
                                                     } catch (e) {
                                                         console.error('Error setting isRangeMode on nested element:', e);
                                                     }
-                                                }, 100);
+                                                }, 300); // Increased delay for nested components
                                             }
                                             
                                             // Apply dark mode fix if needed
@@ -1293,6 +1375,12 @@ function wp_persian_datepicker_israngemode_property_fix() {
                                                 
                                                 setTimeout(function() {
                                                     try {
+                                                        // Check if component is initialized
+                                                        if (!nestedPicker.shadowRoot) {
+                                                            console.log('Nested picker shadowRoot not ready, skipping dark mode fixes');
+                                                            return;
+                                                        }
+                                                        
                                                         // Set the attribute consistently
                                                         nestedPicker.setAttribute('dark-mode', shouldEnableDarkMode ? 'true' : 'false');
                                                         
@@ -1325,14 +1413,14 @@ function wp_persian_datepicker_israngemode_property_fix() {
                                                             nestedPicker.darkMode = shouldEnableDarkMode;
                                                         }
                                                         
-                                                        // Call render if available
-                                                        if (typeof nestedPicker.render === 'function') {
+                                                        // Call render if available and component is ready
+                                                        if (typeof nestedPicker.render === 'function' && nestedPicker.shadowRoot.querySelector('.datepicker-container')) {
                                                             nestedPicker.render();
                                                         }
                                                     } catch (e) {
                                                         console.error('Error setting darkMode on nested element:', e);
                                                     }
-                                                }, 100);
+                                                }, 300); // Increased delay for nested components
                                             }
                                         });
                                     }
@@ -1349,7 +1437,7 @@ function wp_persian_datepicker_israngemode_property_fix() {
             } catch (e) {
                 console.error('Error setting up MutationObserver for property fixes:', e);
             }
-        }, 500); // Wait 500ms after DOMContentLoaded to ensure components are initialized
+        }, 1000); // Wait 1000ms after DOMContentLoaded to ensure components are initialized
     });
     </script>
     <?php
@@ -1381,6 +1469,32 @@ function wp_persian_datepicker_direct_api_fix() {
             
             // Process each datepicker to directly manipulate the internal instance
             datepickers.forEach(function(picker, index) {
+                // Fix for the "Cannot set properties of undefined (setting 'innerHTML')" error
+                // Ensure the shadowRoot is initialized before trying to render
+                if (!picker.shadowRoot || !picker.shadowRoot.querySelector('.datepicker-container')) {
+                    console.log('Picker #' + index + ' is not fully initialized, waiting...');
+                    
+                    // Try to initialize the component's internal structure if missing
+                    if (typeof picker.initializeComponent === 'function') {
+                        console.log('Calling initializeComponent on picker #' + index);
+                        try {
+                            picker.initializeComponent();
+                        } catch (e) {
+                            console.error('Error initializing component:', e);
+                        }
+                    }
+                    
+                    // If no explicit initialization method, we might need to manually trigger rendering
+                    if (typeof picker.connectedCallback === 'function') {
+                        console.log('Attempting to call connectedCallback on picker #' + index);
+                        try {
+                            picker.connectedCallback();
+                        } catch (e) {
+                            console.error('Error calling connectedCallback:', e);
+                        }
+                    }
+                }
+                
                 // Get the current range-mode attribute
                 var rangeMode = picker.getAttribute('range-mode');
                 
@@ -1395,6 +1509,27 @@ function wp_persian_datepicker_direct_api_fix() {
                 
                 try {
                     console.log('Applying direct API fix to picker #' + index);
+                    
+                    // Create a safety wrapper for the render method to prevent the innerHTML error
+                    var originalRender = picker.render;
+                    if (typeof originalRender === 'function') {
+                        picker.render = function() {
+                            try {
+                                // Make sure the container exists before rendering
+                                if (this.shadowRoot && this.shadowRoot.querySelector('.datepicker-container')) {
+                                    console.log('Safe render called with container present');
+                                    return originalRender.apply(this, arguments);
+                                } else {
+                                    console.warn('Prevented render attempt on incomplete component');
+                                    return false;
+                                }
+                            } catch (e) {
+                                console.error('Error in wrapped render method:', e);
+                                return false;
+                            }
+                        };
+                        console.log('Added safety wrapper to render method');
+                    }
                     
                     // Try multiple approaches to access the internal datepicker instance
                     
@@ -1447,9 +1582,12 @@ function wp_persian_datepicker_direct_api_fix() {
                         console.log('Called setRangeMode(true) directly on element');
                     }
                     
-                    // Trigger re-render to ensure changes take effect
-                    if (typeof picker.render === 'function') {
+                    // Trigger re-render to ensure changes take effect, but only if the component is ready
+                    if (typeof picker.render === 'function' && picker.shadowRoot && picker.shadowRoot.querySelector('.datepicker-container')) {
                         picker.render();
+                        console.log('Called render method on picker #' + index);
+                    } else {
+                        console.log('Skipped render call because component is not ready');
                     }
                     
                     // Also try dispatching events that might trigger internal updates
@@ -1485,6 +1623,13 @@ function wp_persian_datepicker_direct_api_fix() {
                                         // Wait for component to initialize
                                         setTimeout(function() {
                                             try {
+                                                // Fix for the "Cannot set properties of undefined (setting 'innerHTML')" error
+                                                // Ensure the shadowRoot is initialized before trying to render
+                                                if (!node.shadowRoot || !node.shadowRoot.querySelector('.datepicker-container')) {
+                                                    console.log('New picker is not fully initialized, skipping render');
+                                                    return;
+                                                }
+                                                
                                                 // Apply the same fixes as above
                                                 if (node._datepicker || node.datepicker) {
                                                     var instance = node._datepicker || node.datepicker;
@@ -1516,7 +1661,8 @@ function wp_persian_datepicker_direct_api_fix() {
                                                     }
                                                 }
                                                 
-                                                if (typeof node.render === 'function') {
+                                                // Only call render if the component is fully initialized
+                                                if (typeof node.render === 'function' && node.shadowRoot && node.shadowRoot.querySelector('.datepicker-container')) {
                                                     node.render();
                                                 }
                                             } catch (e) {
@@ -1538,6 +1684,12 @@ function wp_persian_datepicker_direct_api_fix() {
                                             if (shouldEnableRangeMode) {
                                                 setTimeout(function() {
                                                     try {
+                                                        // Check if component is fully initialized
+                                                        if (!nestedPicker.shadowRoot || !nestedPicker.shadowRoot.querySelector('.datepicker-container')) {
+                                                            console.log('Nested picker is not fully initialized, skipping render');
+                                                            return;
+                                                        }
+                                                        
                                                         // Apply same fixes as above (condensed)
                                                         var instance = null;
                                                         
@@ -1562,13 +1714,14 @@ function wp_persian_datepicker_direct_api_fix() {
                                                             }
                                                         }
                                                         
-                                                        if (typeof nestedPicker.render === 'function') {
+                                                        // Only call render if component is fully initialized
+                                                        if (typeof nestedPicker.render === 'function' && nestedPicker.shadowRoot && nestedPicker.shadowRoot.querySelector('.datepicker-container')) {
                                                             nestedPicker.render();
                                                         }
                                                     } catch (e) {
                                                         console.error('Error applying direct API fix to nested element:', e);
                                                     }
-                                                }, 200);
+                                                }, 300); // Increased timeout for nested pickers
                                             }
                                         });
                                     }
@@ -1585,7 +1738,7 @@ function wp_persian_datepicker_direct_api_fix() {
             } catch (e) {
                 console.error('Error setting up MutationObserver for direct API fix:', e);
             }
-        }, 1000); // Wait 1 second after DOMContentLoaded for full initialization
+        }, 1500); // Increased timeout to ensure components are fully initialized
     });
     </script>
     <?php

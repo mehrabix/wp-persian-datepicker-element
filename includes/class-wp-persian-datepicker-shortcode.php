@@ -103,6 +103,9 @@ class WP_Persian_Datepicker_Shortcode {
             }
         }
         
+        // Initialize the attribute string
+        $attr_str = '';
+        
         // Convert attributes with dashes to attributes with underscore
         // e.g. 'show-holidays' to 'show_holidays'
         $attributes = array();
@@ -197,7 +200,6 @@ class WP_Persian_Datepicker_Shortcode {
         }
         
         // Build HTML attributes string
-        $attr_str = '';
         foreach ($attributes as $key => $value) {
             if ($value === true) {
                 // HTML5 boolean attribute (just the name, no value)
