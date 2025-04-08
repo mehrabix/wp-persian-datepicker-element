@@ -143,7 +143,11 @@ class WP_Persian_Datepicker_Scripts {
      */
     private function should_load_for_active_plugins() {
         // Only check specific pages where forms might be present
-        if (!is_singular() && !is_page() && !is_checkout() && !is_account_page()) {
+        $is_singular_or_page = is_singular() || is_page();
+        $is_woo_checkout = function_exists('is_checkout') ? is_checkout() : false;
+        $is_woo_account = function_exists('is_account_page') ? is_account_page() : false;
+        
+        if (!$is_singular_or_page && !$is_woo_checkout && !$is_woo_account) {
             return false;
         }
         
@@ -152,25 +156,25 @@ class WP_Persian_Datepicker_Scripts {
         
         // Contact Form 7
         if (function_exists('wpcf7_contact_form_tag_func') && 
-            (is_singular() || is_page())) {
+            $is_singular_or_page) {
             $load_scripts = true;
         }
         
         // WooCommerce
         if (function_exists('WC') && 
-            (is_checkout() || is_account_page())) {
+            ($is_woo_checkout || $is_woo_account)) {
             $load_scripts = true;
         }
         
         // Gravity Forms
         if (class_exists('GFCommon') && 
-            (is_singular() || is_page())) {
+            $is_singular_or_page) {
             $load_scripts = true;
         }
         
         // WPForms
         if ((function_exists('wpforms') || class_exists('WPForms\WPForms')) && 
-            (is_singular() || is_page())) {
+            $is_singular_or_page) {
             $load_scripts = true;
         }
         

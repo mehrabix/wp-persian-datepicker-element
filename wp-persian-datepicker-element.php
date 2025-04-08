@@ -301,12 +301,14 @@ class WP_Persian_Datepicker_Element {
         
         // WooCommerce integration
         if ($this->active_integrations['woocommerce']) {
-            // Add WooCommerce hooks
-            add_action('woocommerce_after_checkout_form', function() {
-                // Ensure datepicker scripts are loaded on checkout
-                $scripts = new WP_Persian_Datepicker_Scripts();
-                $scripts->enqueue_scripts();
-            });
+            // Add WooCommerce hooks - only if the hook exists
+            if (function_exists('WC') && has_filter('woocommerce_after_checkout_form')) {
+                add_action('woocommerce_after_checkout_form', function() {
+                    // Ensure datepicker scripts are loaded on checkout
+                    $scripts = new WP_Persian_Datepicker_Scripts();
+                    $scripts->enqueue_scripts();
+                });
+            }
         }
         
         // Gravity Forms integration
