@@ -13,7 +13,11 @@
 
     // When the DOM is fully loaded
     document.addEventListener('DOMContentLoaded', function() {
+        // Initialize built-in datepickers
         initializeAllDatepickers();
+
+        // Transform regular inputs into datepickers if they have the class
+        transformInputsToDatepickers();
 
         // Handle dynamically added datepickers
         observeNewDatepickers();
@@ -47,6 +51,266 @@
         
         datepickers.forEach(function(datepicker) {
             setupDatepickerIntegration(datepicker);
+        });
+    }
+
+    /**
+     * Transform regular inputs with persian-datepicker class into datepicker elements
+     */
+    function transformInputsToDatepickers() {
+        // Find all inputs with the persian-datepicker class
+        var inputs = document.querySelectorAll('input.persian-datepicker');
+        
+        inputs.forEach(function(input) {
+            // Don't transform if already transformed
+            if (input.dataset.datepickerTransformed === 'true') {
+                return;
+            }
+            
+            // Create the datepicker element
+            var datepicker = document.createElement('persian-datepicker-element');
+            datepicker.className = 'wp-persian-datepicker';
+            
+            // Generate a unique ID if none exists
+            var inputId = input.id || 'pdp-input-' + generateUniqueId();
+            input.id = inputId;
+            
+            // Set ID for the datepicker
+            datepicker.id = 'pdp-' + inputId;
+            
+            // Copy attributes from input to datepicker
+            copyDataAttributesToElement(input, datepicker);
+            
+            // Preserve the original input for form submission but hide it
+            input.style.display = 'none';
+            input.dataset.datepickerTransformed = 'true';
+            
+            // Insert the datepicker after the input
+            input.parentNode.insertBefore(datepicker, input.nextSibling);
+            
+            // Setup event handling to sync values
+            datepicker.addEventListener('dateSelected', function(e) {
+                if (e.detail && e.detail.formattedDate) {
+                    input.value = e.detail.formattedDate;
+                    triggerChangeEvent(input);
+                }
+            });
+            
+            // If input has value, set it in the datepicker
+            if (input.value) {
+                datepicker.setAttribute('value', input.value);
+            }
+            
+            // Setup integration
+            setupDatepickerIntegration(datepicker);
+        });
+        
+        // Special handling for Contact Form 7
+        setupContactForm7Integration();
+        
+        // Special handling for WPForms
+        setupWPFormsIntegration();
+        
+        // Special handling for Gravity Forms
+        setupGravityFormsIntegration();
+    }
+
+    /**
+     * Copy data attributes from input to datepicker element
+     */
+    function copyDataAttributesToElement(input, element) {
+        // Copy standard attributes
+        var attributes = [
+            'placeholder', 'name', 'required', 'aria-required', 
+            'aria-invalid', 'aria-describedby'
+        ];
+        
+        attributes.forEach(function(attr) {
+            if (input.hasAttribute(attr)) {
+                element.setAttribute(attr, input.getAttribute(attr));
+            }
+        });
+        
+        // Copy all data attributes with the specific prefix
+        Array.from(input.attributes).forEach(function(attr) {
+            if (attr.name.startsWith('data-')) {
+                // Convert data-attribute to attribute format 
+                // e.g., data-show-holidays to show-holidays
+                var newAttrName = attr.name.replace('data-', '');
+                element.setAttribute(newAttrName, attr.value);
+            }
+        });
+        
+        // Set up form-specific attributes
+        if (input.form) {
+            element.setAttribute('form', input.form.id);
+        }
+    }
+
+    /**
+     * Setup Contact Form 7 integration
+     */
+    function setupContactForm7Integration() {
+        // Handle CF7 forms with date fields
+        var cf7Forms = document.querySelectorAll('.wpcf7-form');
+        
+        cf7Forms.forEach(function(form) {
+            // Find all date inputs in CF7 forms
+            var dateInputs = form.querySelectorAll('.wpcf7-date, input.persian-datepicker');
+            
+            dateInputs.forEach(function(input) {
+                // Skip if already transformed
+                if (input.dataset.datepickerTransformed === 'true') {
+                    return;
+                }
+                
+                // Add the persian-datepicker class to ensure it's processed
+                input.classList.add('persian-datepicker');
+                
+                // Mark for re-processing
+                input.dataset.datepickerTransforming = 'true';
+            });
+            
+            // Re-process any marked inputs
+            var transformingInputs = form.querySelectorAll('input[data-datepicker-transforming="true"]');
+            transformingInputs.forEach(function(input) {
+                input.dataset.datepickerTransforming = 'false';
+                transformInputToDatepicker(input);
+            });
+            
+            // Handle CF7 AJAX form submission and reset
+            if (window.wpcf7) {
+                document.addEventListener('wpcf7submit', function(e) {
+                    if (e.detail.contactFormId && form.querySelector('[data-contactform-id="' + e.detail.contactFormId + '"]')) {
+                        // Reset datepickers in this form
+                        var datepickers = form.querySelectorAll('persian-datepicker-element');
+                        datepickers.forEach(function(datepicker) {
+                            if (typeof datepicker.reset === 'function') {
+                                datepicker.reset();
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * Transform a single input into a datepicker
+     */
+    function transformInputToDatepicker(input) {
+        // Create the datepicker element
+        var datepicker = document.createElement('persian-datepicker-element');
+        datepicker.className = 'wp-persian-datepicker';
+        
+        // Generate a unique ID if none exists
+        var inputId = input.id || 'pdp-input-' + generateUniqueId();
+        input.id = inputId;
+        
+        // Set ID for the datepicker
+        datepicker.id = 'pdp-' + inputId;
+        
+        // Copy attributes from input to datepicker
+        copyDataAttributesToElement(input, datepicker);
+        
+        // Preserve the original input for form submission but hide it
+        input.style.display = 'none';
+        input.dataset.datepickerTransformed = 'true';
+        
+        // Insert the datepicker after the input
+        input.parentNode.insertBefore(datepicker, input.nextSibling);
+        
+        // Setup event handling to sync values
+        datepicker.addEventListener('dateSelected', function(e) {
+            if (e.detail && e.detail.formattedDate) {
+                input.value = e.detail.formattedDate;
+                triggerChangeEvent(input);
+            }
+        });
+        
+        // If input has value, set it in the datepicker
+        if (input.value) {
+            datepicker.setAttribute('value', input.value);
+        }
+        
+        // Setup integration
+        setupDatepickerIntegration(datepicker);
+        
+        return datepicker;
+    }
+
+    /**
+     * Setup WPForms integration
+     */
+    function setupWPFormsIntegration() {
+        // Handle WPForms with date fields
+        var wpformsForms = document.querySelectorAll('.wpforms-form');
+        
+        wpformsForms.forEach(function(form) {
+            // Find date inputs
+            var dateInputs = form.querySelectorAll('input.wpforms-field-date-time-date, input.persian-date');
+            
+            dateInputs.forEach(function(input) {
+                // Skip if already transformed
+                if (input.dataset.datepickerTransformed === 'true') {
+                    return;
+                }
+                
+                // Add the persian-datepicker class to ensure it's processed
+                input.classList.add('persian-datepicker');
+                
+                // Mark for re-processing
+                input.dataset.datepickerTransforming = 'true';
+            });
+            
+            // Re-process any marked inputs
+            var transformingInputs = form.querySelectorAll('input[data-datepicker-transforming="true"]');
+            transformingInputs.forEach(function(input) {
+                input.dataset.datepickerTransforming = 'false';
+                transformInputToDatepicker(input);
+            });
+        });
+    }
+
+    /**
+     * Setup Gravity Forms integration
+     */
+    function setupGravityFormsIntegration() {
+        // Handle Gravity Forms with date fields
+        var gravityForms = document.querySelectorAll('.gform_wrapper');
+        
+        gravityForms.forEach(function(formWrapper) {
+            // Find date inputs
+            var dateInputs = formWrapper.querySelectorAll('input.datepicker, input.persian-date');
+            
+            dateInputs.forEach(function(input) {
+                // Skip if already transformed
+                if (input.dataset.datepickerTransformed === 'true') {
+                    return;
+                }
+                
+                // Add the persian-datepicker class to ensure it's processed
+                input.classList.add('persian-datepicker');
+                
+                // Mark for re-processing
+                input.dataset.datepickerTransforming = 'true';
+            });
+            
+            // Re-process any marked inputs
+            var transformingInputs = formWrapper.querySelectorAll('input[data-datepicker-transforming="true"]');
+            transformingInputs.forEach(function(input) {
+                input.dataset.datepickerTransforming = 'false';
+                transformInputToDatepicker(input);
+            });
+            
+            // Handle Gravity Forms AJAX submissions
+            if (window.gform) {
+                // Listen for form render event
+                document.addEventListener('gform_post_render', function() {
+                    // Re-run the transformation for the rendered form
+                    setupGravityFormsIntegration();
+                });
+            }
         });
     }
 
@@ -184,6 +448,38 @@
         if (datepicker.closest('.woocommerce-checkout') || datepicker.closest('.woocommerce-account')) {
             datepicker.classList.add('woocommerce-datepicker');
         }
+        
+        // Apply default options from WordPress settings
+        if (typeof wpPersianDatepickerOptions !== 'undefined') {
+            // Only apply if attribute is not already set
+            if (!datepicker.hasAttribute('placeholder') && wpPersianDatepickerOptions.placeholder) {
+                datepicker.setAttribute('placeholder', wpPersianDatepickerOptions.placeholder);
+            }
+            
+            if (!datepicker.hasAttribute('format') && wpPersianDatepickerOptions.format) {
+                datepicker.setAttribute('format', wpPersianDatepickerOptions.format);
+            }
+            
+            if (!datepicker.hasAttribute('rtl') && typeof wpPersianDatepickerOptions.rtl !== 'undefined') {
+                datepicker.setAttribute('rtl', wpPersianDatepickerOptions.rtl ? 'true' : 'false');
+            }
+            
+            if (!datepicker.hasAttribute('show-holidays') && typeof wpPersianDatepickerOptions.show_holidays !== 'undefined') {
+                datepicker.setAttribute('show-holidays', wpPersianDatepickerOptions.show_holidays ? 'true' : 'false');
+            }
+            
+            if (!datepicker.hasAttribute('holiday-types') && wpPersianDatepickerOptions.holiday_types) {
+                datepicker.setAttribute('holiday-types', wpPersianDatepickerOptions.holiday_types);
+            }
+            
+            if (!datepicker.hasAttribute('dark-mode') && typeof wpPersianDatepickerOptions.dark_mode !== 'undefined') {
+                datepicker.setAttribute('dark-mode', wpPersianDatepickerOptions.dark_mode ? 'true' : 'false');
+            }
+            
+            if (!datepicker.hasAttribute('range-mode') && typeof wpPersianDatepickerOptions.range_mode !== 'undefined') {
+                datepicker.setAttribute('range-mode', wpPersianDatepickerOptions.range_mode ? 'true' : 'false');
+            }
+        }
     }
 
     /**
@@ -247,6 +543,16 @@
                                     setupDatepickerIntegration(datepicker);
                                 });
                             }
+                            
+                            // Check for inputs that need transformation
+                            var datepickerInputs = node.querySelectorAll('input.persian-datepicker');
+                            if (datepickerInputs.length) {
+                                datepickerInputs.forEach(function(input) {
+                                    if (!input.dataset.datepickerTransformed) {
+                                        transformInputToDatepicker(input);
+                                    }
+                                });
+                            }
                         }
                     });
                 }
@@ -259,5 +565,4 @@
             subtree: true
         });
     }
-
 })(); 

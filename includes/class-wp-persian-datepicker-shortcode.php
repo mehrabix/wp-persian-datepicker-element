@@ -51,16 +51,48 @@ class WP_Persian_Datepicker_Shortcode {
             'today_button_class' => '',
             'tomorrow_button_class' => '',
             'events_path' => PERSIAN_DATEPICKER_PLUGIN_URL . 'assets/data/events.json',
+            // Enhanced customization options
+            'auto_close' => true,
+            'default_view' => 'day', // day, month, year
+            'position' => 'bottom', // bottom, top, auto
+            'custom_class' => '',
+            'input_class' => '',
+            'calendar_class' => '',
+            'input_style' => '',
+            'calendar_style' => '',
+            'use_current_on_init' => false,
+            'clear_button' => false,
+            'clear_button_text' => 'پاک کردن',
+            'close_on_select' => true,
+            'inline_mode' => false,
+            'readable_format' => '',
+            'highlight_today' => true,
+            'highlight_holidays' => true,
+            'initial_value' => '',
+            'calendar_height' => '',
+            'calendar_width' => '',
+            'header_size' => 'default', // small, default, large
+            'day_names_type' => 'default', // default, short, min
+            'theme' => '', // bootstrap, material, custom
+            'on_init_js' => '',
+            'on_select_js' => '',
+            'on_open_js' => '',
+            'on_close_js' => '',
         );
         
         // Parse attributes
         $atts = shortcode_atts($default_atts, $atts, 'persian_datepicker');
         
         // Convert boolean attributes from string to actual boolean
-        $bool_attrs = array('show_holidays', 'rtl', 'dark_mode', 'range_mode', 
-                           'show_month_selector', 'show_year_selector', 
-                           'show_prev_button', 'show_next_button', 
-                           'show_today_button', 'show_tomorrow_button');
+        $bool_attrs = array(
+            'show_holidays', 'rtl', 'dark_mode', 'range_mode', 
+            'show_month_selector', 'show_year_selector', 
+            'show_prev_button', 'show_next_button', 
+            'show_today_button', 'show_tomorrow_button',
+            'auto_close', 'use_current_on_init', 'clear_button',
+            'close_on_select', 'inline_mode', 'highlight_today',
+            'highlight_holidays'
+        );
         
         foreach ($bool_attrs as $attr) {
             if (is_string($atts[$attr])) {
@@ -72,6 +104,13 @@ class WP_Persian_Datepicker_Shortcode {
         // e.g. 'show-holidays' to 'show_holidays'
         $attributes = array();
         foreach ($atts as $key => $value) {
+            // Skip reserved attributes that should be handled separately
+            if (in_array($key, array('class', 'custom_class', 'input_class', 'calendar_class', 
+                                     'input_style', 'calendar_style', 'on_init_js', 'on_select_js',
+                                     'on_open_js', 'on_close_js'))) {
+                continue;
+            }
+            
             // Convert underscore to dash for HTML attribute
             $key_dash = str_replace('_', '-', $key);
             
@@ -96,8 +135,47 @@ class WP_Persian_Datepicker_Shortcode {
         }
         
         // Special handling for class attribute
-        $class = $attributes['class'] ?? '';
-        unset($attributes['class']);
+        $class = array('wp-persian-datepicker');
+        
+        // Add custom classes if provided
+        if (!empty($atts['class'])) {
+            $class[] = $atts['class'];
+        }
+        
+        if (!empty($atts['custom_class'])) {
+            $class[] = $atts['custom_class'];
+        }
+        
+        // Build additional custom styles/classes
+        $custom_styles = '';
+        $input_class = !empty($atts['input_class']) ? ' input-class="' . esc_attr($atts['input_class']) . '"' : '';
+        $calendar_class = !empty($atts['calendar_class']) ? ' calendar-class="' . esc_attr($atts['calendar_class']) . '"' : '';
+        
+        if (!empty($atts['input_style'])) {
+            $custom_styles .= ' input-style="' . esc_attr($atts['input_style']) . '"';
+        }
+        
+        if (!empty($atts['calendar_style'])) {
+            $custom_styles .= ' calendar-style="' . esc_attr($atts['calendar_style']) . '"';
+        }
+        
+        // Event handlers for JavaScript
+        $js_handlers = '';
+        if (!empty($atts['on_init_js'])) {
+            $js_handlers .= ' data-on-init="' . esc_attr($atts['on_init_js']) . '"';
+        }
+        
+        if (!empty($atts['on_select_js'])) {
+            $js_handlers .= ' data-on-select="' . esc_attr($atts['on_select_js']) . '"';
+        }
+        
+        if (!empty($atts['on_open_js'])) {
+            $js_handlers .= ' data-on-open="' . esc_attr($atts['on_open_js']) . '"';
+        }
+        
+        if (!empty($atts['on_close_js'])) {
+            $js_handlers .= ' data-on-close="' . esc_attr($atts['on_close_js']) . '"';
+        }
         
         // Build HTML attributes string
         $attr_str = '';
@@ -111,19 +189,51 @@ class WP_Persian_Datepicker_Shortcode {
             }
         }
         
-        // اضافه کردن ویژگی مسیر فایل events.json
-        if (isset($atts['events_path'])) {
-            $attr_str .= sprintf(' events-path="%s"', esc_attr($atts['events_path']));
-        } elseif (isset($default_atts['events_path'])) {
-            $attr_str .= sprintf(' events-path="%s"', esc_attr($default_atts['events_path']));
-        }
-        
         // Create the web component HTML
         $output = sprintf(
-            '<persian-datepicker-element%s class="wp-persian-datepicker %s"></persian-datepicker-element>',
+            '<persian-datepicker-element%s class="%s"%s%s%s%s></persian-datepicker-element>',
             $attr_str,
-            esc_attr($class)
+            esc_attr(implode(' ', $class)),
+            $input_class,
+            $calendar_class,
+            $custom_styles,
+            $js_handlers
         );
+        
+        // Add script for event handling if any JS handlers were specified
+        if (!empty($atts['on_init_js']) || !empty($atts['on_select_js']) || 
+            !empty($atts['on_open_js']) || !empty($atts['on_close_js'])) {
+            $output .= '<script>
+            document.addEventListener("DOMContentLoaded", function() {
+                const datepicker = document.getElementById("' . esc_attr($atts['id']) . '");
+                if (!datepicker) return;
+                
+                // Init handler
+                if (datepicker.hasAttribute("data-on-init")) {
+                    const initFn = new Function("event", datepicker.getAttribute("data-on-init"));
+                    datepicker.addEventListener("initialized", initFn);
+                }
+                
+                // Select handler
+                if (datepicker.hasAttribute("data-on-select")) {
+                    const selectFn = new Function("event", datepicker.getAttribute("data-on-select"));
+                    datepicker.addEventListener("dateSelected", selectFn);
+                }
+                
+                // Open handler
+                if (datepicker.hasAttribute("data-on-open")) {
+                    const openFn = new Function("event", datepicker.getAttribute("data-on-open"));
+                    datepicker.addEventListener("open", openFn);
+                }
+                
+                // Close handler
+                if (datepicker.hasAttribute("data-on-close")) {
+                    const closeFn = new Function("event", datepicker.getAttribute("data-on-close"));
+                    datepicker.addEventListener("close", closeFn);
+                }
+            });
+            </script>';
+        }
         
         return $output;
     }

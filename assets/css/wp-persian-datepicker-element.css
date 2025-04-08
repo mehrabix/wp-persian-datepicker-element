@@ -5,13 +5,67 @@
  * @subpackage WP_Persian_Datepicker_Element/assets/css
  */
 
-/* Basic styling for the datepicker component */
-.wp-persian-datepicker {
-    display: inline-block;
+/* Global datepicker styling */
+persian-datepicker-element {
     width: 100%;
     max-width: 300px;
-    margin: 0 0 15px 0;
-    box-sizing: border-box;
+    display: inline-block;
+    font-family: Tahoma, Arial, sans-serif;
+    margin-bottom: 10px;
+    
+    /* Persian font */
+    --jdp-font-family: 'Vazir', 'Tahoma', Arial, sans-serif;
+    
+    /* Base styling */
+    --jdp-border-radius: 5px;
+    --jdp-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --jdp-transition-duration: 0.3s;
+    
+    /* Input styling */
+    --jdp-input-bg: #ffffff;
+    --jdp-input-border: #ddd;
+    --jdp-input-border-radius: 4px;
+    --jdp-input-padding: 10px 12px;
+    --jdp-input-focus-border: #2271b1;
+    --jdp-input-focus-shadow: 0 0 0 1px #2271b1;
+    
+    /* Calendar styling */
+    --jdp-background: #ffffff;
+    --jdp-foreground: #333333;
+    --jdp-selected-bg: #2271b1;
+    --jdp-selected-fg: #ffffff;
+    --jdp-hover-bg: rgba(34, 113, 177, 0.1);
+    --jdp-accent: #2271b1;
+    --jdp-border-color: #ddd;
+    
+    /* Holiday styling */
+    --jdp-holiday-color: #e53935;
+    
+    /* Today styling */
+    --jdp-today-border-color: #2271b1;
+    
+    /* Navigation arrows */
+    --jdp-nav-arrow-color: #505050;
+    --jdp-nav-arrow-size: 10px;
+    --jdp-nav-button-bg-hover: rgba(0, 0, 0, 0.05);
+    
+    /* Animations */
+    --jdp-fade-from-y: -10px;
+}
+
+/* Dark mode theme */
+persian-datepicker-element[dark-mode] {
+    --jdp-background: #333333;
+    --jdp-foreground: #e0e0e0;
+    --jdp-border-color: #555;
+    --jdp-input-bg: #444;
+    --jdp-input-border: #555;
+    --jdp-nav-arrow-color: #e0e0e0;
+    --jdp-selected-bg: #0073aa;
+    --jdp-hover-bg: rgba(0, 115, 170, 0.2);
+    --jdp-today-border-color: #0073aa;
+    --jdp-input-focus-border: #0073aa;
+    --jdp-input-focus-shadow: 0 0 0 1px #0073aa;
 }
 
 /* RTL support */
@@ -90,4 +144,125 @@ form .wp-persian-datepicker {
 .wp-persian-datepicker:focus-within {
     outline: 2px solid var(--jdp-primary, #0891b2);
     outline-offset: 2px;
+}
+
+/* Responsive design */
+@media (max-width: 480px) {
+    persian-datepicker-element {
+        max-width: 100%;
+    }
+}
+
+/* Contact Form 7 integration */
+.wpcf7-form persian-datepicker-element {
+    max-width: 100%;
+}
+
+.wpcf7-form persian-datepicker-element input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Gravity Forms integration */
+.gform_wrapper persian-datepicker-element {
+    max-width: 100%;
+}
+
+.gform_wrapper persian-datepicker-element input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* WPForms integration */
+.wpforms-form persian-datepicker-element {
+    max-width: 100%;
+}
+
+.wpforms-form persian-datepicker-element input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* WooCommerce integration */
+.woocommerce form .form-row persian-datepicker-element {
+    max-width: 100%;
+}
+
+.woocommerce form .form-row persian-datepicker-element input {
+    width: 100%;
+    box-sizing: border-box;
+    line-height: 1.5;
+}
+
+/* Theme-specific styles */
+.theme-twentytwentytwo persian-datepicker-element,
+.theme-twentytwentythree persian-datepicker-element,
+.theme-twentytwentyfour persian-datepicker-element {
+    max-width: 100%;
+}
+
+/* Elementor integration */
+.elementor-widget-form persian-datepicker-element {
+    max-width: 100%;
+}
+
+/* Range calendar styles */
+persian-datepicker-element[range-mode="true"] .in-range {
+    background-color: rgba(34, 113, 177, 0.2);
+    border-radius: 0;
+}
+
+persian-datepicker-element[range-mode="true"] .range-end,
+persian-datepicker-element[range-mode="true"] .range-start {
+    background-color: var(--jdp-selected-bg);
+    color: var(--jdp-selected-fg);
+    border-radius: var(--jdp-border-radius);
+}
+
+/* Mobile optimizations */
+@media (max-width: 480px) {
+    persian-datepicker-element .calendar {
+        position: fixed !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        max-width: 90vw;
+        width: 320px;
+        max-height: 80vh;
+        overflow-y: auto;
+        z-index: 999999 !important;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+    
+    persian-datepicker-element::part(overlay) {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999998;
+    }
+}
+
+/* Accessibility enhancements */
+persian-datepicker-element:focus-within {
+    outline: 2px solid var(--jdp-input-focus-border);
+    outline-offset: 2px;
+}
+
+/* Inline mode */
+persian-datepicker-element[inline-mode="true"] {
+    max-width: 100%;
+}
+
+persian-datepicker-element[inline-mode="true"] input {
+    display: none;
+}
+
+persian-datepicker-element[inline-mode="true"] .calendar {
+    display: block;
+    position: static;
+    box-shadow: none;
+    border: 1px solid var(--jdp-border-color);
 } 

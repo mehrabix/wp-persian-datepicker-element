@@ -2,13 +2,17 @@
 /**
  * Plugin Name: WP Persian Datepicker Element
  * Plugin URI: https://github.com/yourusername/wp-persian-datepicker-element
- * Description: A modern, customizable Persian (Jalali) date picker web component for WordPress
- * Version: 1.0.0
+ * Description: A modern, highly customizable Persian (Jalali) date picker web component for WordPress with Contact Form 7, WPForms, Gravity Forms, and WooCommerce integration
+ * Version: 1.1.0
  * Author: Ahmad Mehrabi
  * Author URI: https://github.com/yourusername
  * Text Domain: wp-persian-datepicker-element
  * Domain Path: /languages
  * License: MIT
+ * Requires at least: 5.6
+ * Requires PHP: 7.2
+ * WC requires at least: 5.0
+ * WC tested up to: 8.3
  */
 
 // If this file is called directly, abort.
@@ -20,7 +24,7 @@ if (!defined('ABSPATH')) {
  * Currently plugin version.
  * Start at version 1.0.0 and use SemVer - https://semver.org
  */
-define('PERSIAN_DATEPICKER_VERSION', '1.0.0');
+define('PERSIAN_DATEPICKER_VERSION', '1.1.0');
 define('PERSIAN_DATEPICKER_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('PERSIAN_DATEPICKER_PLUGIN_URL', plugin_dir_url(__FILE__));
 
