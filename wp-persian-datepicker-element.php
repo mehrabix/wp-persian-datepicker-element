@@ -116,8 +116,6 @@ function wp_persian_datepicker_load_textdomain() {
             'Default Placeholder' => 'متن راهنمای پیش‌فرض',
             'Default Date Format' => 'قالب تاریخ پیش‌فرض',
             'Show Holidays' => 'نمایش تعطیلات',
-            'Integration Guide' => 'راهنمای ادغام',
-            'Integration' => 'ادغام',
             'Right-to-Left (RTL)' => 'راست به چپ (RTL)',
             'Dark Mode' => 'حالت تاریک',
             'Holiday Types' => 'انواع تعطیلات',
@@ -495,7 +493,6 @@ class WP_Persian_Datepicker_Element {
             'Default Date Format' => 'قالب تاریخ پیش‌فرض',
             'Show Holidays' => 'نمایش تعطیلات',
             'Integration Guide' => 'راهنمای ادغام',
-            'Integration' => 'ادغام',
             'Right-to-Left (RTL)' => 'راست به چپ (RTL)',
             'Dark Mode' => 'حالت تاریک',
             'Holiday Types' => 'انواع تعطیلات',
@@ -617,7 +614,6 @@ function wppdp_persian_admin_filter($translated_text, $text, $domain) {
         'Default Date Format' => 'قالب تاریخ پیش‌فرض',
         'Save Changes' => 'ذخیره تغییرات',
         'Submit' => 'ارسال',
-        'Integration' => 'ادغام',
     );
     
     if (isset($manual_translations[$text])) {
@@ -1010,7 +1006,7 @@ function wp_persian_datepicker_direct_property_fix() {
                                         
                                         // Apply dark mode styles directly if needed
                                         if (shouldEnableDarkMode) {
-                                            // Apply the dark mode CSS variables
+                                            // Apply the dark mode CSS variables directly
                                             node.style.setProperty('--jdp-background', '#1e1e2f');
                                             node.style.setProperty('--jdp-foreground', '#e2e8f0');
                                             node.style.setProperty('--jdp-muted', '#334155');
@@ -1030,70 +1026,10 @@ function wp_persian_datepicker_direct_property_fix() {
                                             node.style.setProperty('--jdp-input-focus-shadow', '0 0 0 1px #0891b2');
                                         }
                                         
-                                        // Try to set the property if accessible
-                                        if (node.__proto__ && node.__proto__.darkMode !== undefined) {
-                                            node.__proto__.darkMode = shouldEnableDarkMode;
-                                        } else {
+                                        // Try to set the property directly if possible
+                                        if (typeof node.darkMode !== 'undefined') {
                                             node.darkMode = shouldEnableDarkMode;
                                         }
-                                                
-                                                // Call render if available
-                                                if (typeof node.render === 'function') {
-                                                    node.render();
-                                                }
-                                            } catch (e) {
-                                                console.error('Error setting darkMode on new element:', e);
-                                            }
-                                        }, 100);
-                                    }
-                                    
-                                } else if (node.querySelectorAll) {
-                                    // Check for datepickers inside the added node
-                                    var nestedPickers = node.querySelectorAll('persian-datepicker-element');
-                                    if (nestedPickers.length > 0) {
-                                        console.log('Found nested datepickers in new content:', nestedPickers.length);
-                                        
-                                        // Process each nested picker with a delay
-                                        nestedPickers.forEach(function(nestedPicker) {
-                                            var rangeMode = nestedPicker.getAttribute('range-mode');
-                                            var shouldEnableRangeMode = rangeMode === 'true' || rangeMode === '1' || rangeMode === true;
-                                            
-                                            if (shouldEnableRangeMode) {
-                                                setTimeout(function() {
-                                                    try {
-                                                        // Apply same fixes as above (condensed)
-                                                        var instance = null;
-                                                        
-                                                        if (nestedPicker._datepicker || nestedPicker.datepicker) {
-                                                            instance = nestedPicker._datepicker || nestedPicker.datepicker;
-                                                        } else if (nestedPicker.shadowRoot) {
-                                                            var baseElement = nestedPicker.shadowRoot.querySelector('.datepicker-container');
-                                                            if (baseElement && baseElement._datepicker) {
-                                                                instance = baseElement._datepicker;
-                                                            }
-                                                        }
-                                                        
-                                                        if (instance) {
-                                                            if (typeof instance.setRangeMode === 'function') {
-                                                                instance.setRangeMode(true);
-                                                            } else if (typeof instance.setOptions === 'function') {
-                                                                instance.setOptions({ isRangeMode: true });
-                                                            } else if (instance.options) {
-                                                                instance.options.isRangeMode = true;
-                                                                if (instance.updateOptions) instance.updateOptions();
-                                                                else if (instance.update) instance.update();
-                                                            }
-                                                        }
-                                                        
-                                                        if (typeof nestedPicker.render === 'function') {
-                                                            nestedPicker.render();
-                                                        }
-                                                    } catch (e) {
-                                                        console.error('Error applying property fixes to nested element:', e);
-                                                    }
-                                                }, 200);
-                                            }
-                                        });
                                     }
                                 }
                             });
@@ -1103,10 +1039,10 @@ function wp_persian_datepicker_direct_property_fix() {
                 
                 // Start observing the body for added nodes
                 observer.observe(document.body, { childList: true, subtree: true });
-                console.log('MutationObserver set up to watch for new datepickers for property fixes');
+                console.log('MutationObserver set up to watch for new datepickers');
                 
             } catch (e) {
-                console.error('Error setting up MutationObserver for property fixes:', e);
+                console.error('Error setting up MutationObserver:', e);
             }
         }
         
@@ -1263,90 +1199,140 @@ function wp_persian_datepicker_israngemode_property_fix() {
                                         // Wait a small amount of time for the component to initialize
                                         setTimeout(function() {
                                             try {
-                                                // Apply the same fixes as above
-                                                if (node._datepicker || node.datepicker) {
-                                                    var instance = node._datepicker || node.datepicker;
-                                                    
-                                                    if (typeof instance.setRangeMode === 'function') {
-                                                        instance.setRangeMode(true);
-                                                    } else if (typeof instance.setOptions === 'function') {
-                                                        instance.setOptions({ isRangeMode: true });
-                                                    } else if (instance.options) {
-                                                        instance.options.isRangeMode = true;
-                                                        if (instance.updateOptions) instance.updateOptions();
-                                                        else if (instance.update) instance.update();
-                                                    }
-                                                } else if (node.shadowRoot) {
-                                                    var baseElement = node.shadowRoot.querySelector('.datepicker-container');
-                                                    
-                                                    if (baseElement && baseElement._datepicker) {
-                                                        var instance = baseElement._datepicker;
-                                                        
-                                                        if (typeof instance.setRangeMode === 'function') {
-                                                            instance.setRangeMode(true);
-                                                        } else if (typeof instance.setOptions === 'function') {
-                                                            instance.setOptions({ isRangeMode: true });
-                                                        } else if (instance.options) {
-                                                            instance.options.isRangeMode = true;
-                                                            if (instance.updateOptions) instance.updateOptions();
-                                                            else if (instance.update) instance.update();
-                                                        }
-                                                    }
+                                                if (node.__proto__ && node.__proto__.isRangeMode !== undefined) {
+                                                    node.__proto__.isRangeMode = shouldEnableRangeMode;
+                                                } else {
+                                                    node.isRangeMode = shouldEnableRangeMode;
+                                                }
+                                            } catch (e) {
+                                                console.error('Error setting isRangeMode on new element:', e);
+                                            }
+                                        }, 100);
+                                    }
+                                    
+                                    // Apply dark mode fix if needed
+                                    var darkMode = node.getAttribute('darkmode') || node.getAttribute('dark-mode');
+                                    if (darkMode !== null) {
+                                        var shouldEnableDarkMode = darkMode === 'true' || darkMode === '1' || darkMode === true;
+                                        
+                                        // Wait a small amount of time for the component to initialize
+                                        setTimeout(function() {
+                                            try {
+                                                // Set the attribute consistently
+                                                node.setAttribute('dark-mode', shouldEnableDarkMode ? 'true' : 'false');
+                                                
+                                                // Apply dark mode styles directly if needed
+                                                if (shouldEnableDarkMode) {
+                                                    // Apply the dark mode CSS variables
+                                                    node.style.setProperty('--jdp-background', '#1e1e2f');
+                                                    node.style.setProperty('--jdp-foreground', '#e2e8f0');
+                                                    node.style.setProperty('--jdp-muted', '#334155');
+                                                    node.style.setProperty('--jdp-muted-foreground', '#94a3b8');
+                                                    node.style.setProperty('--jdp-border', '#475569');
+                                                    node.style.setProperty('--jdp-day-hover-bg', '#334155');
+                                                    node.style.setProperty('--jdp-input-border-color', '#475569');
+                                                    node.style.setProperty('--jdp-input-bg', '#1e1e2f');
+                                                    node.style.setProperty('--jdp-calendar-bg', '#1e1e2f');
+                                                    node.style.setProperty('--jdp-holiday-bg', '#3f1e2e');
+                                                    node.style.setProperty('--jdp-border-color', '#475569');
+                                                    node.style.setProperty('--jdp-nav-arrow-color', '#e2e8f0');
+                                                    node.style.setProperty('--jdp-selected-bg', '#0891b2');
+                                                    node.style.setProperty('--jdp-hover-bg', 'rgba(8, 145, 178, 0.2)');
+                                                    node.style.setProperty('--jdp-today-border-color', '#0891b2');
+                                                    node.style.setProperty('--jdp-input-focus-border', '#0891b2');
+                                                    node.style.setProperty('--jdp-input-focus-shadow', '0 0 0 1px #0891b2');
                                                 }
                                                 
+                                                // Try to set the property if accessible
+                                                if (node.__proto__ && node.__proto__.darkMode !== undefined) {
+                                                    node.__proto__.darkMode = shouldEnableDarkMode;
+                                                } else {
+                                                    node.darkMode = shouldEnableDarkMode;
+                                                }
+                                                
+                                                // Call render if available
                                                 if (typeof node.render === 'function') {
                                                     node.render();
                                                 }
                                             } catch (e) {
-                                                console.error('Error applying property fixes to new element:', e);
+                                                console.error('Error setting darkMode on new element:', e);
                                             }
-                                        }, 200);
+                                        }, 100);
                                     }
+                                    
                                 } else if (node.querySelectorAll) {
-                                    // Process nested datepicker elements
+                                    // Check for datepickers inside the added node
                                     var nestedPickers = node.querySelectorAll('persian-datepicker-element');
                                     if (nestedPickers.length > 0) {
                                         console.log('Found nested datepickers in new content:', nestedPickers.length);
                                         
-                                        // Process each nested picker with a delay
+                                        // Apply fix to each nested picker
                                         nestedPickers.forEach(function(nestedPicker) {
+                                            // Apply range mode fix if needed
                                             var rangeMode = nestedPicker.getAttribute('range-mode');
-                                            var shouldEnableRangeMode = rangeMode === 'true' || rangeMode === '1' || rangeMode === true;
-                                            
-                                            if (shouldEnableRangeMode) {
+                                            if (rangeMode !== null) {
+                                                var shouldEnableRangeMode = rangeMode === 'true' || rangeMode === '1' || rangeMode === true;
+                                                
                                                 setTimeout(function() {
                                                     try {
-                                                        // Apply same fixes as above (condensed)
-                                                        var instance = null;
+                                                        if (nestedPicker.__proto__ && nestedPicker.__proto__.isRangeMode !== undefined) {
+                                                            nestedPicker.__proto__.isRangeMode = shouldEnableRangeMode;
+                                                        } else {
+                                                            nestedPicker.isRangeMode = shouldEnableRangeMode;
+                                                        }
+                                                    } catch (e) {
+                                                        console.error('Error setting isRangeMode on nested element:', e);
+                                                    }
+                                                }, 100);
+                                            }
+                                            
+                                            // Apply dark mode fix if needed
+                                            var darkMode = nestedPicker.getAttribute('darkmode') || nestedPicker.getAttribute('dark-mode');
+                                            if (darkMode !== null) {
+                                                var shouldEnableDarkMode = darkMode === 'true' || darkMode === '1' || darkMode === true;
+                                                
+                                                setTimeout(function() {
+                                                    try {
+                                                        // Set the attribute consistently
+                                                        nestedPicker.setAttribute('dark-mode', shouldEnableDarkMode ? 'true' : 'false');
                                                         
-                                                        if (nestedPicker._datepicker || nestedPicker.datepicker) {
-                                                            instance = nestedPicker._datepicker || nestedPicker.datepicker;
-                                                        } else if (nestedPicker.shadowRoot) {
-                                                            var baseElement = nestedPicker.shadowRoot.querySelector('.datepicker-container');
-                                                            if (baseElement && baseElement._datepicker) {
-                                                                instance = baseElement._datepicker;
-                                                            }
+                                                        // Apply dark mode styles directly if needed
+                                                        if (shouldEnableDarkMode) {
+                                                            // Apply the dark mode CSS variables
+                                                            nestedPicker.style.setProperty('--jdp-background', '#1e1e2f');
+                                                            nestedPicker.style.setProperty('--jdp-foreground', '#e2e8f0');
+                                                            nestedPicker.style.setProperty('--jdp-muted', '#334155');
+                                                            nestedPicker.style.setProperty('--jdp-muted-foreground', '#94a3b8');
+                                                            nestedPicker.style.setProperty('--jdp-border', '#475569');
+                                                            nestedPicker.style.setProperty('--jdp-day-hover-bg', '#334155');
+                                                            nestedPicker.style.setProperty('--jdp-input-border-color', '#475569');
+                                                            nestedPicker.style.setProperty('--jdp-input-bg', '#1e1e2f');
+                                                            nestedPicker.style.setProperty('--jdp-calendar-bg', '#1e1e2f');
+                                                            nestedPicker.style.setProperty('--jdp-holiday-bg', '#3f1e2e');
+                                                            nestedPicker.style.setProperty('--jdp-border-color', '#475569');
+                                                            nestedPicker.style.setProperty('--jdp-nav-arrow-color', '#e2e8f0');
+                                                            nestedPicker.style.setProperty('--jdp-selected-bg', '#0891b2');
+                                                            nestedPicker.style.setProperty('--jdp-hover-bg', 'rgba(8, 145, 178, 0.2)');
+                                                            nestedPicker.style.setProperty('--jdp-today-border-color', '#0891b2');
+                                                            nestedPicker.style.setProperty('--jdp-input-focus-border', '#0891b2');
+                                                            nestedPicker.style.setProperty('--jdp-input-focus-shadow', '0 0 0 1px #0891b2');
                                                         }
                                                         
-                                                        if (instance) {
-                                                            if (typeof instance.setRangeMode === 'function') {
-                                                                instance.setRangeMode(true);
-                                                            } else if (typeof instance.setOptions === 'function') {
-                                                                instance.setOptions({ isRangeMode: true });
-                                                            } else if (instance.options) {
-                                                                instance.options.isRangeMode = true;
-                                                                if (instance.updateOptions) instance.updateOptions();
-                                                                else if (instance.update) instance.update();
-                                                            }
+                                                        // Try to set the property if accessible
+                                                        if (nestedPicker.__proto__ && nestedPicker.__proto__.darkMode !== undefined) {
+                                                            nestedPicker.__proto__.darkMode = shouldEnableDarkMode;
+                                                        } else {
+                                                            nestedPicker.darkMode = shouldEnableDarkMode;
                                                         }
                                                         
+                                                        // Call render if available
                                                         if (typeof nestedPicker.render === 'function') {
                                                             nestedPicker.render();
                                                         }
                                                     } catch (e) {
-                                                        console.error('Error applying property fixes to nested element:', e);
+                                                        console.error('Error setting darkMode on nested element:', e);
                                                     }
-                                                }, 200);
+                                                }, 100);
                                             }
                                         });
                                     }

@@ -301,12 +301,12 @@ class WP_Persian_Datepicker_Admin {
                 $options = $new_options;
                 
                 // Add success message
-                add_settings_error(
-                    'wp_persian_datepicker_messages',
-                    'wp_persian_datepicker_message',
-                    esc_html__('Settings saved.', 'wp-persian-datepicker-element'),
-                    'updated'
-                );
+            add_settings_error(
+                'wp_persian_datepicker_messages',
+                'wp_persian_datepicker_message',
+                esc_html__('Settings saved.', 'wp-persian-datepicker-element'),
+                'updated'
+            );
                 
                 // Debug: Check what's being saved
                 error_log('WP Persian Datepicker: Saved options: ' . print_r($new_options, true));
@@ -404,10 +404,10 @@ class WP_Persian_Datepicker_Admin {
                     
                     <?php submit_button(); ?>
                     
-                    <div class="persian-datepicker-preview">
+                <div class="persian-datepicker-preview">
                         <h3><?php esc_html_e('Preview', 'wp-persian-datepicker-element'); ?></h3>
                         <div class="preview-container">
-                            <?php 
+                    <?php 
                             // Convert options to attributes
                             $attrs = array();
                             if (!empty($options['placeholder'])) $attrs[] = 'placeholder="' . esc_attr($options['placeholder']) . '"';
@@ -430,7 +430,7 @@ class WP_Persian_Datepicker_Admin {
                             ?>
                             <div class="preview-datepicker<?php echo esc_attr($dark_class); ?>">
                                 <persian-datepicker-element id="preview-datepicker" <?php echo implode(' ', $attrs); ?>></persian-datepicker-element>
-                            </div>
+                </div>
                             <p class="description">
                                 <?php esc_html_e('This preview reflects your current settings. Changes to settings will update this preview.', 'wp-persian-datepicker-element'); ?>
                             </p>
@@ -450,9 +450,9 @@ class WP_Persian_Datepicker_Admin {
                     $this->display_integration_guide_fa();
                 } else {
                     $this->display_integration_guide_en();
-                }
-                ?>
-            </div>
+            }
+            ?>
+        </div>
         </div>
         <div id="wp-pd-debug" style="margin-top: 30px; padding: 15px; border: 1px solid #ccc; background: #f8f8f8; display: none;">
             <h3>Debug Information</h3>
