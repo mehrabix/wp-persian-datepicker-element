@@ -192,4 +192,8 @@ msgstr "امروز"
 
 #: includes/class-wp-persian-datepicker-shortcode.php:30
 msgid "Tomorrow"
-msgstr "فردا" 
+msgstr "فردا"
+
+#: admin/class-wp-persian-datepicker-admin.php:271
+msgid "Integration"
+msgstr "ادغام" 
