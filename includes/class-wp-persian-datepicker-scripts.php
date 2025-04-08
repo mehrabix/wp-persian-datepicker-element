@@ -15,11 +15,15 @@ class WP_Persian_Datepicker_Scripts {
      * @since    1.0.0
      */
     public function enqueue_scripts() {
-        // Only load if the shortcode or block is being used
+        // Check if we need to load scripts based on active plugins
+        $load_for_plugins = $this->should_load_for_active_plugins();
+        
+        // Load if the shortcode or block is being used, or if compatible plugins are active on the page
         global $post;
-        if (is_a($post, 'WP_Post') && 
+        if (($load_for_plugins) || 
+            (is_a($post, 'WP_Post') && 
             (has_shortcode($post->post_content, 'persian_datepicker') || 
-             has_block('wp-persian-datepicker-element/datepicker'))) {
+             has_block('wp-persian-datepicker-element/datepicker')))) {
             
             $this->register_datepicker_assets();
         }
@@ -92,9 +96,9 @@ class WP_Persian_Datepicker_Scripts {
             true
         );
         
-        // Helper script for WordPress integration
-        wp_enqueue_script(
-            'wp-persian-datepicker-element-integration',
+        // Frontend integration script
+        wp_register_script(
+            'wp-persian-datepicker-frontend',
             PERSIAN_DATEPICKER_PLUGIN_URL . 'assets/js/frontend/wp-integration.js',
             array('persian-datepicker-element', 'wp-persian-datepicker-events-path-patch'),
             PERSIAN_DATEPICKER_VERSION,
@@ -107,10 +111,69 @@ class WP_Persian_Datepicker_Scripts {
         // Add plugin base URL to options
         $options['plugin_url'] = PERSIAN_DATEPICKER_PLUGIN_URL;
         
+        // Pass options to script
         wp_localize_script(
-            'wp-persian-datepicker-element-integration',
+            'wp-persian-datepicker-frontend',
             'wpPersianDatepickerOptions',
             $options
         );
+        
+        // Pass active plugin integrations to script
+        $integrations = array(
+            'cf7' => function_exists('wpcf7_contact_form_tag_func'),
+            'woocommerce' => function_exists('WC'),
+            'gravity_forms' => class_exists('GFCommon'),
+            'wpforms' => function_exists('wpforms') || class_exists('WPForms\WPForms')
+        );
+        
+        wp_localize_script(
+            'wp-persian-datepicker-frontend',
+            'wpPersianDatepickerIntegrations',
+            $integrations
+        );
+        
+        // Enqueue the frontend script
+        wp_enqueue_script('wp-persian-datepicker-frontend');
+    }
+
+    /**
+     * Check if scripts should be loaded for active plugins
+     * 
+     * @return bool Whether scripts should be loaded
+     */
+    private function should_load_for_active_plugins() {
+        // Only check specific pages where forms might be present
+        if (!is_singular() && !is_page() && !is_checkout() && !is_account_page()) {
+            return false;
+        }
+        
+        // Check for active plugins that we integrate with
+        $load_scripts = false;
+        
+        // Contact Form 7
+        if (function_exists('wpcf7_contact_form_tag_func') && 
+            (is_singular() || is_page())) {
+            $load_scripts = true;
+        }
+        
+        // WooCommerce
+        if (function_exists('WC') && 
+            (is_checkout() || is_account_page())) {
+            $load_scripts = true;
+        }
+        
+        // Gravity Forms
+        if (class_exists('GFCommon') && 
+            (is_singular() || is_page())) {
+            $load_scripts = true;
+        }
+        
+        // WPForms
+        if ((function_exists('wpforms') || class_exists('WPForms\WPForms')) && 
+            (is_singular() || is_page())) {
+            $load_scripts = true;
+        }
+        
+        return $load_scripts;
     }
 } 

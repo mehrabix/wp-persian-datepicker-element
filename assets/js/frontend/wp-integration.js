@@ -11,6 +11,23 @@
     // تنظیم مسیر فایل events.json
     window.persianDatepickerEventsPath = wpPersianDatepickerOptions.plugin_url + 'assets/data/events.json';
 
+    // تعریف متغیرهای برای ادغام با افزونه‌های دیگر
+    const integrations = {
+        cf7: false,
+        woocommerce: false,
+        gravity_forms: false,
+        wpforms: false
+    };
+
+    // بررسی وضعیت ادغام با افزونه‌های دیگر
+    if (typeof wpPersianDatepickerIntegrations !== 'undefined') {
+        console.log('Persian Datepicker Active Integrations:', wpPersianDatepickerIntegrations);
+        integrations.cf7 = wpPersianDatepickerIntegrations.cf7 || false;
+        integrations.woocommerce = wpPersianDatepickerIntegrations.woocommerce || false;
+        integrations.gravity_forms = wpPersianDatepickerIntegrations.gravity_forms || false;
+        integrations.wpforms = wpPersianDatepickerIntegrations.wpforms || false;
+    }
+
     // When the DOM is fully loaded
     document.addEventListener('DOMContentLoaded', function() {
         // Initialize built-in datepickers
@@ -105,14 +122,25 @@
             setupDatepickerIntegration(datepicker);
         });
         
-        // Special handling for Contact Form 7
-        setupContactForm7Integration();
+        // Special handling for Contact Form 7 - only if active
+        if (integrations.cf7) {
+            setupContactForm7Integration();
+        }
         
-        // Special handling for WPForms
-        setupWPFormsIntegration();
+        // Special handling for WPForms - only if active
+        if (integrations.wpforms) {
+            setupWPFormsIntegration();
+        }
         
-        // Special handling for Gravity Forms
-        setupGravityFormsIntegration();
+        // Special handling for Gravity Forms - only if active
+        if (integrations.gravity_forms) {
+            setupGravityFormsIntegration();
+        }
+        
+        // Special handling for WooCommerce - only if active
+        if (integrations.woocommerce) {
+            setupWooCommerceIntegration();
+        }
     }
 
     /**
@@ -151,8 +179,19 @@
      * Setup Contact Form 7 integration
      */
     function setupContactForm7Integration() {
-        // Handle CF7 forms with date fields
+        if (!integrations.cf7) {
+            return;
+        }
+        
+        // Check if Contact Form 7 is active by looking for its elements
         var cf7Forms = document.querySelectorAll('.wpcf7-form');
+        
+        // Only proceed if Contact Form 7 forms exist
+        if (cf7Forms.length === 0) {
+            return;
+        }
+        
+        console.log('Setting up Contact Form 7 integration');
         
         cf7Forms.forEach(function(form) {
             // Find all date inputs in CF7 forms
@@ -179,7 +218,7 @@
             });
             
             // Handle CF7 AJAX form submission and reset
-            if (window.wpcf7) {
+            if (typeof window.wpcf7 !== 'undefined') {
                 document.addEventListener('wpcf7submit', function(e) {
                     if (e.detail.contactFormId && form.querySelector('[data-contactform-id="' + e.detail.contactFormId + '"]')) {
                         // Reset datepickers in this form
@@ -243,8 +282,19 @@
      * Setup WPForms integration
      */
     function setupWPFormsIntegration() {
-        // Handle WPForms with date fields
+        if (!integrations.wpforms) {
+            return;
+        }
+        
+        // Check if WPForms is active by looking for its forms
         var wpformsForms = document.querySelectorAll('.wpforms-form');
+        
+        // Only proceed if WPForms forms exist
+        if (wpformsForms.length === 0) {
+            return;
+        }
+        
+        console.log('Setting up WPForms integration');
         
         wpformsForms.forEach(function(form) {
             // Find date inputs
@@ -270,14 +320,46 @@
                 transformInputToDatepicker(input);
             });
         });
+        
+        // Handle WPForms form submission events if the WPForms JavaScript is available
+        if (typeof window.wpforms !== 'undefined') {
+            document.addEventListener('wpformsBeforeFormSubmit', function(e) {
+                // Reset datepickers after form submission
+                if (e.detail && e.detail.formID) {
+                    var form = document.querySelector('#wpforms-form-' + e.detail.formID);
+                    if (form) {
+                        // Wait for form submission to complete
+                        setTimeout(function() {
+                            var datepickers = form.querySelectorAll('persian-datepicker-element');
+                            datepickers.forEach(function(datepicker) {
+                                if (typeof datepicker.reset === 'function') {
+                                    datepicker.reset();
+                                }
+                            });
+                        }, 500);
+                    }
+                }
+            });
+        }
     }
 
     /**
      * Setup Gravity Forms integration
      */
     function setupGravityFormsIntegration() {
-        // Handle Gravity Forms with date fields
+        if (!integrations.gravity_forms) {
+            return;
+        }
+        
+        // Check if Gravity Forms is active by looking for its wrappers
         var gravityForms = document.querySelectorAll('.gform_wrapper');
+        
+        // Only proceed if Gravity Forms exist
+        if (gravityForms.length === 0) {
+            return;
+        }
+        
+        console.log('Setting up Gravity Forms integration');
         
         gravityForms.forEach(function(formWrapper) {
             // Find date inputs
@@ -302,16 +384,76 @@
                 input.dataset.datepickerTransforming = 'false';
                 transformInputToDatepicker(input);
             });
+        });
+        
+        // Handle Gravity Forms AJAX submissions if GF JavaScript is available
+        if (typeof window.gform !== 'undefined') {
+            // Listen for form render event
+            document.addEventListener('gform_post_render', function() {
+                // Re-run the transformation for the rendered form
+                setupGravityFormsIntegration();
+            });
+        }
+    }
+
+    /**
+     * Setup WooCommerce integration
+     */
+    function setupWooCommerceIntegration() {
+        if (!integrations.woocommerce) {
+            return;
+        }
+        
+        // Check if WooCommerce is active by looking for its elements
+        var wooCheckout = document.querySelector('.woocommerce-checkout');
+        var wooAccount = document.querySelector('.woocommerce-account');
+        
+        // Only proceed if WooCommerce elements exist
+        if (!wooCheckout && !wooAccount) {
+            return;
+        }
+        
+        console.log('Setting up WooCommerce integration');
+        
+        // Find date inputs in WooCommerce checkout
+        if (wooCheckout) {
+            var checkoutDateInputs = wooCheckout.querySelectorAll('input[type="date"], input.date-picker, input.persian-date');
             
-            // Handle Gravity Forms AJAX submissions
-            if (window.gform) {
-                // Listen for form render event
-                document.addEventListener('gform_post_render', function() {
-                    // Re-run the transformation for the rendered form
-                    setupGravityFormsIntegration();
+            checkoutDateInputs.forEach(function(input) {
+                // Skip if already transformed
+                if (input.dataset.datepickerTransformed === 'true') {
+                    return;
+                }
+                
+                // Add the persian-datepicker class and transform
+                input.classList.add('persian-datepicker');
+                transformInputToDatepicker(input);
+            });
+            
+            // Handle checkout form updates
+            if (typeof window.jQuery !== 'undefined' && typeof window.jQuery.fn.woocommerce_checkout_form === 'function') {
+                jQuery(document.body).on('updated_checkout', function() {
+                    // Re-run WooCommerce integration after checkout is updated
+                    setupWooCommerceIntegration();
                 });
             }
-        });
+        }
+        
+        // Find date inputs in WooCommerce account pages
+        if (wooAccount) {
+            var accountDateInputs = wooAccount.querySelectorAll('input[type="date"], input.date-picker, input.persian-date');
+            
+            accountDateInputs.forEach(function(input) {
+                // Skip if already transformed
+                if (input.dataset.datepickerTransformed === 'true') {
+                    return;
+                }
+                
+                // Add the persian-datepicker class and transform
+                input.classList.add('persian-datepicker');
+                transformInputToDatepicker(input);
+            });
+        }
     }
 
     /**
@@ -432,20 +574,21 @@
      * Apply WordPress specific integrations
      */
     function applyWordPressIntegration(datepicker) {
-        // Special integration with common WordPress form plugins
+        // Special integration with common WordPress form plugins - only if they're active
         
         // Gravity Forms integration
-        if (datepicker.closest('.gform_wrapper')) {
+        if (integrations.gravity_forms && datepicker.closest('.gform_wrapper')) {
             datepicker.classList.add('gform-datepicker');
         }
         
         // Contact Form 7 integration
-        if (datepicker.closest('.wpcf7-form')) {
+        if (integrations.cf7 && datepicker.closest('.wpcf7-form')) {
             datepicker.classList.add('wpcf7-datepicker');
         }
         
         // WooCommerce integration
-        if (datepicker.closest('.woocommerce-checkout') || datepicker.closest('.woocommerce-account')) {
+        if (integrations.woocommerce && 
+            (datepicker.closest('.woocommerce-checkout') || datepicker.closest('.woocommerce-account'))) {
             datepicker.classList.add('woocommerce-datepicker');
         }
         
