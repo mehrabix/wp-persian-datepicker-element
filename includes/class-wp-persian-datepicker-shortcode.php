@@ -50,6 +50,7 @@ class WP_Persian_Datepicker_Shortcode {
             'tomorrow_button_text' => 'فردا',
             'today_button_class' => '',
             'tomorrow_button_class' => '',
+            'events_path' => PERSIAN_DATEPICKER_PLUGIN_URL . 'assets/data/events.json',
         );
         
         // Parse attributes
@@ -94,6 +95,13 @@ class WP_Persian_Datepicker_Shortcode {
         $attr_str = '';
         foreach ($attributes as $key => $value) {
             $attr_str .= sprintf(' %s="%s"', esc_attr($key), esc_attr($value));
+        }
+        
+        // اضافه کردن ویژگی مسیر فایل events.json
+        if (isset($atts['events_path'])) {
+            $attr_str .= sprintf(' events-path="%s"', esc_attr($atts['events_path']));
+        } elseif (isset($default_atts['events_path'])) {
+            $attr_str .= sprintf(' events-path="%s"', esc_attr($default_atts['events_path']));
         }
         
         // Create the web component HTML

@@ -28,13 +28,130 @@ define('PERSIAN_DATEPICKER_PLUGIN_URL', plugin_dir_url(__FILE__));
  * Load plugin textdomain.
  */
 function wp_persian_datepicker_load_textdomain() {
-    load_plugin_textdomain(
-        'wp-persian-datepicker-element',
-        false,
-        dirname(plugin_basename(__FILE__)) . '/languages/'
-    );
+    // مسیر زبان پلاگین
+    $language_dir = dirname(plugin_basename(__FILE__)) . '/languages/';
+    
+    // اگر زبان فارسی فعال است، مستقیماً ترجمه‌های فارسی را تنظیم کنیم
+    $locale = determine_locale();
+    if ($locale == 'fa_IR') {
+        // تنظیم دستی ترجمه‌ها - این روش مستقیماً ترجمه‌ها را بدون نیاز به فایل MO تنظیم می‌کند
+        
+        // ساخت کلاس ساده برای ترجمه
+        if (!class_exists('Simple_Translation_Entry')) {
+            class Simple_Translation_Entry {
+                public $singular;
+                public $translations;
+                
+                public function __construct($args = array()) {
+                    $this->singular = isset($args['singular']) ? $args['singular'] : '';
+                    $this->translations = isset($args['translations']) ? $args['translations'] : array();
+                }
+            }
+        }
+        
+        if (!class_exists('Simple_MO')) {
+            class Simple_MO {
+                public $entries = array();
+                
+                public function add_entry($entry) {
+                    $this->entries[$entry->singular] = $entry;
+                }
+                
+                public function translate($text) {
+                    return isset($this->entries[$text]) && !empty($this->entries[$text]->translations) ? 
+                           $this->entries[$text]->translations[0] : $text;
+                }
+            }
+        }
+        
+        global $l10n;
+        if (!isset($l10n['wp-persian-datepicker-element'])) {
+            $l10n['wp-persian-datepicker-element'] = new Simple_MO();
+        }
+        
+        // اینجا ما تمام رشته‌های متن مورد نیاز را ترجمه می‌کنیم
+        $translations = array(
+            'Persian Date Picker Settings' => 'تنظیمات انتخابگر تاریخ شمسی',
+            'Persian Date Picker' => 'انتخابگر تاریخ شمسی',
+            'General Settings' => 'تنظیمات عمومی',
+            'Default Placeholder' => 'متن راهنمای پیش‌فرض',
+            'Default Date Format' => 'قالب تاریخ پیش‌فرض',
+            'Show Holidays' => 'نمایش تعطیلات',
+            'Right-to-Left (RTL)' => 'راست به چپ (RTL)',
+            'Dark Mode' => 'حالت تاریک',
+            'Holiday Types' => 'انواع تعطیلات',
+            'Range Mode' => 'حالت انتخاب بازه',
+            'Configure the default settings for the Persian Date Picker component. These settings will be used as defaults for shortcodes and widgets unless overridden.' => 'تنظیمات پیش‌فرض کامپوننت انتخابگر تاریخ شمسی را پیکربندی کنید. این تنظیمات به عنوان پیش‌فرض برای شورت‌کدها و ابزارک‌ها استفاده می‌شوند مگر اینکه بازنویسی شوند.',
+            'The placeholder text to show in the input field.' => 'متن راهنما که در فیلد ورودی نمایش داده می‌شود.',
+            'The date format pattern (e.g. YYYY/MM/DD, YYYY-MM-DD).' => 'الگوی قالب تاریخ (مثلاً YYYY/MM/DD, YYYY-MM-DD).',
+            'Show holidays in the calendar' => 'نمایش تعطیلات در تقویم',
+            'Enable right-to-left layout' => 'فعال‌سازی چیدمان راست به چپ',
+            'Enable dark mode' => 'فعال‌سازی حالت تاریک',
+            'Comma-separated list of holiday types to display (Iran, Afghanistan, AncientIran, International). Use "all" to show all types.' => 'لیست انواع تعطیلات با کاما جدا شده (Iran, Afghanistan, AncientIran, International). از "all" برای نمایش همه انواع استفاده کنید.',
+            'Enable date range selection mode' => 'فعال‌سازی حالت انتخاب بازه تاریخ',
+            'Settings saved.' => 'تنظیمات ذخیره شد.',
+            'Settings' => 'تنظیمات',
+            'Shortcode Usage' => 'نحوه استفاده از شورت‌کد',
+            'Preview' => 'پیش‌نمایش',
+            'To display the Persian Date Picker in your content, use the following shortcode:' => 'برای نمایش انتخابگر تاریخ شمسی در محتوای خود، از شورت‌کد زیر استفاده کنید:',
+            'You can customize the datepicker with various attributes:' => 'می‌توانید انتخابگر تاریخ را با ویژگی‌های مختلفی سفارشی کنید:',
+            'Basic Usage' => 'استفاده پایه',
+            'With Custom Placeholder' => 'با متن راهنمای سفارشی',
+            'With Custom Format' => 'با قالب سفارشی',
+            'RTL Direction' => 'جهت راست به چپ',
+            'Range Mode' => 'حالت انتخاب بازه',
+            'Custom Holiday Types' => 'انواع تعطیلات سفارشی',
+            'Full Example' => 'مثال کامل',
+            'Gutenberg Block' => 'بلوک گوتنبرگ',
+            'You can also use the Persian Date Picker as a Gutenberg block. Simply search for "Persian Date Picker" in the block inserter.' => 'شما همچنین می‌توانید از انتخابگر تاریخ شمسی به عنوان یک بلوک گوتنبرگ استفاده کنید. کافیست در درج‌کننده بلوک، عبارت «انتخابگر تاریخ شمسی» را جستجو کنید.',
+            'A Persian (Jalali) date picker widget.' => 'یک ابزارک انتخابگر تاریخ شمسی (جلالی).',
+            'Title:' => 'عنوان:',
+            'Placeholder:' => 'متن راهنما:',
+            'Date Format:' => 'قالب تاریخ:',
+            'e.g. YYYY/MM/DD or YYYY-MM-DD' => 'مثلاً YYYY/MM/DD یا YYYY-MM-DD',
+            'Holiday Types:' => 'انواع تعطیلات:',
+            'Comma-separated list: Iran,Afghanistan,AncientIran,International' => 'لیست جدا شده با کاما: Iran,Afghanistan,AncientIran,International',
+            'Today' => 'امروز',
+            'Tomorrow' => 'فردا',
+        );
+        
+        // تنظیم ترجمه‌ها
+        foreach ($translations as $original => $translation) {
+            $l10n['wp-persian-datepicker-element']->add_entry(new Simple_Translation_Entry(array(
+                'singular' => $original,
+                'translations' => array($translation),
+            )));
+        }
+        
+        // اتصال تابع فیلتر برای تغییر متن‌های ترجمه نشده
+        add_filter('gettext', 'wppdp_translate_strings', 10, 3);
+        
+    } else {
+        // روش معمولی بارگذاری زبان برای سایر زبان‌ها
+        load_plugin_textdomain(
+            'wp-persian-datepicker-element',
+            false,
+            $language_dir
+        );
+    }
 }
-add_action('plugins_loaded', 'wp_persian_datepicker_load_textdomain');
+add_action('plugins_loaded', 'wp_persian_datepicker_load_textdomain', 1);
+
+/**
+ * فیلتر متن‌های ترجمه نشده 
+ */
+function wppdp_translate_strings($translation, $text, $domain) {
+    if ($domain === 'wp-persian-datepicker-element') {
+        global $l10n;
+        if (isset($l10n['wp-persian-datepicker-element']) && method_exists($l10n['wp-persian-datepicker-element'], 'translate')) {
+            $custom_translation = $l10n['wp-persian-datepicker-element']->translate($text);
+            if ($custom_translation !== $text) {
+                return $custom_translation;
+            }
+        }
+    }
+    return $translation;
+}
 
 /**
  * The core plugin class.
@@ -199,4 +316,64 @@ register_deactivation_hook(__FILE__, array('WP_Persian_Datepicker_Element', 'dea
 register_uninstall_hook(__FILE__, array('WP_Persian_Datepicker_Element', 'uninstall'));
 
 // Initialize the plugin
-$wp_persian_datepicker = new WP_Persian_Datepicker_Element(); 
+$wp_persian_datepicker = new WP_Persian_Datepicker_Element();
+
+/**
+ * فارسی‌سازی خودکار عناوین رابط کاربری
+ */
+function wppdp_persian_admin_filter($translated_text, $text, $domain) {
+    // فقط در دامنه این افزونه اعمال شود
+    if ($domain !== 'wp-persian-datepicker-element') {
+        return $translated_text;
+    }
+    
+    // اگر زبان فارسی نیست، برگشت متن اصلی
+    $locale = determine_locale();
+    if ($locale !== 'fa_IR') {
+        return $translated_text;
+    }
+    
+    // ترجمه‌های دستی برای عناوین انگلیسی که به هر دلیلی از طریق روش اصلی ترجمه نشده‌اند
+    $manual_translations = array(
+        'Persian Date Picker Settings' => 'تنظیمات انتخابگر تاریخ شمسی',
+        'Persian Date Picker' => 'انتخابگر تاریخ شمسی',
+        'Default Placeholder' => 'متن راهنمای پیش‌فرض',
+        'Default Date Format' => 'قالب تاریخ پیش‌فرض',
+        'Save Changes' => 'ذخیره تغییرات',
+        'Submit' => 'ارسال',
+    );
+    
+    if (isset($manual_translations[$text])) {
+        return $manual_translations[$text];
+    }
+    
+    return $translated_text;
+}
+add_filter('gettext', 'wppdp_persian_admin_filter', 20, 3);
+
+/**
+ * فارسی‌سازی دکمه‌های وردپرس در بخش‌های مربوط به افزونه
+ */
+function wppdp_persian_admin_buttons() {
+    // مطمئن شویم فقط در صفحه تنظیمات این افزونه اجرا شود
+    global $pagenow;
+    if ($pagenow === 'options-general.php' && isset($_GET['page']) && $_GET['page'] === 'wp-persian-datepicker-settings') {
+        // اگر زبان فارسی است
+        $locale = determine_locale();
+        if ($locale === 'fa_IR') {
+            ?>
+            <script type="text/javascript">
+            jQuery(document).ready(function($) {
+                // تغییر متن دکمه ذخیره تغییرات
+                $('input#submit').val('ذخیره تغییرات');
+                
+                // تنظیم استایل فارسی برای کل صفحه
+                $('body').addClass('rtl');
+                $('.wrap h1, .form-table th, .form-table td, .nav-tab-wrapper a, p.description').css('font-family', 'Tahoma, Arial');
+            });
+            </script>
+            <?php
+        }
+    }
+}
+add_action('admin_footer', 'wppdp_persian_admin_buttons'); 

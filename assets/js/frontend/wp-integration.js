@@ -8,12 +8,34 @@
 (function() {
     'use strict';
 
+    // تنظیم مسیر فایل events.json
+    window.persianDatepickerEventsPath = wpPersianDatepickerOptions.plugin_url + 'assets/data/events.json';
+
     // When the DOM is fully loaded
     document.addEventListener('DOMContentLoaded', function() {
         initializeAllDatepickers();
 
         // Handle dynamically added datepickers
         observeNewDatepickers();
+
+        // وقتی صفحه بارگذاری شد
+        const datepickers = document.querySelectorAll('persian-datepicker-element');
+        
+        // پردازش تنظیمات از وردپرس
+        if (datepickers.length > 0 && typeof wpPersianDatepickerOptions !== 'undefined') {
+            // تنظیم مسیر فایل تعطیلات برای همه کامپوننت‌ها
+            datepickers.forEach(function(datepicker) {
+                // کمک به کامپوننت برای یافتن مسیر فایل events.json
+                datepicker.addEventListener('persianDatepickerEventsPath', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    datepicker.setAttribute('events-path', window.persianDatepickerEventsPath);
+                });
+                
+                // یک رویداد مصنوعی برای درخواست مسیر فایل events.json تولید کنیم
+                datepicker.dispatchEvent(new CustomEvent('persianDatepickerEventsPathRequest'));
+            });
+        }
     });
 
     /**

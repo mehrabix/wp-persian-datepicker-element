@@ -259,9 +259,43 @@ class WP_Persian_Datepicker_Admin {
         
         // Show settings errors
         settings_errors('wp_persian_datepicker_messages');
+        
+        // اضافه کردن کلاس RTL برای زبان فارسی
+        $rtl_class = (determine_locale() === 'fa_IR') ? ' rtl' : '';
+        
+        // استایل های مخصوص فارسی
+        if (determine_locale() === 'fa_IR') {
+            ?>
+            <style type="text/css">
+                .rtl .form-table th {
+                    text-align: right;
+                    font-family: Tahoma, Arial;
+                }
+                .rtl h1, .rtl h2, .rtl h3, 
+                .rtl .form-table td, 
+                .rtl p, 
+                .rtl .description, 
+                .rtl label,
+                .rtl .nav-tab {
+                    font-family: Tahoma, Arial;
+                }
+                .rtl input[type="checkbox"] {
+                    margin-left: 8px;
+                    margin-right: 0;
+                }
+                .rtl code {
+                    direction: ltr;
+                    display: inline-block;
+                }
+                .rtl .wp-persian-datepicker-help .form-table th {
+                    font-weight: normal;
+                }
+            </style>
+            <?php
+        }
         ?>
         
-        <div class="wrap">
+        <div class="wrap<?php echo esc_attr($rtl_class); ?>">
             <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
             
             <div class="nav-tab-wrapper">

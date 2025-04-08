@@ -83,17 +83,30 @@ class WP_Persian_Datepicker_Scripts {
             true
         );
         
+        // Load the events path patch script
+        wp_enqueue_script(
+            'wp-persian-datepicker-events-path-patch',
+            PERSIAN_DATEPICKER_PLUGIN_URL . 'assets/js/frontend/events-path-patch.js',
+            array('persian-datepicker-element'),
+            PERSIAN_DATEPICKER_VERSION,
+            true
+        );
+        
         // Helper script for WordPress integration
         wp_enqueue_script(
             'wp-persian-datepicker-element-integration',
             PERSIAN_DATEPICKER_PLUGIN_URL . 'assets/js/frontend/wp-integration.js',
-            array('persian-datepicker-element'),
+            array('persian-datepicker-element', 'wp-persian-datepicker-events-path-patch'),
             PERSIAN_DATEPICKER_VERSION,
             true
         );
         
         // Pass options to the script
         $options = get_option('wp_persian_datepicker_options', array());
+        
+        // Add plugin base URL to options
+        $options['plugin_url'] = PERSIAN_DATEPICKER_PLUGIN_URL;
+        
         wp_localize_script(
             'wp-persian-datepicker-element-integration',
             'wpPersianDatepickerOptions',
