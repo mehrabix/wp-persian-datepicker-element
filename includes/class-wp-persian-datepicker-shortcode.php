@@ -124,20 +124,17 @@ class WP_Persian_Datepicker_Shortcode {
             
             // Special handling for range_mode attribute to ensure it works correctly
             if ($key === 'range_mode') {
-                // Debug output
-                // echo "<!-- Range Mode Value: " . var_export($value, true) . " -->";
-                
-                // Make sure it's converted to a proper boolean
+                // Make sure it's converted to a proper boolean for output purposes
                 $value = filter_var($value, FILTER_VALIDATE_BOOLEAN);
                 
-                // Add the attribute only if true (ensures it's explicitly set always)
-                if ($value === true) {
-                    $attributes[$key_dash] = true;
-                } else {
-                    // For false values, explicitly set "false" as a string
-                    $attributes[$key_dash] = 'false';
-                }
+                // Always add the attribute with an explicit string value 
+                // to ensure it's correctly recognized by the web component
+                $attr_str .= ' range-mode="' . ($value ? 'true' : 'false') . '"';
                 
+                // Log for debugging
+                error_log('WP Persian Datepicker: Setting range-mode attribute to: ' . ($value ? 'true' : 'false'));
+                
+                // Skip the normal attribute processing
                 continue;
             }
             
@@ -205,9 +202,6 @@ class WP_Persian_Datepicker_Shortcode {
             if ($value === true) {
                 // HTML5 boolean attribute (just the name, no value)
                 $attr_str .= ' ' . esc_attr($key);
-            } else if ($key === 'range-mode') {
-                // Ensure range-mode is explicitly set with a string value
-                $attr_str .= sprintf(' %s="%s"', esc_attr($key), $value === true || $value === 'true' ? 'true' : 'false');
             } else if (in_array(str_replace('-', '_', $key), $bool_attrs)) {
                 // For other boolean attributes also ensure explicit value
                 $attr_str .= sprintf(' %s="%s"', esc_attr($key), $value === true || $value === 'true' ? 'true' : 'false');

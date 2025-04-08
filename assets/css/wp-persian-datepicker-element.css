@@ -55,17 +55,23 @@ persian-datepicker-element {
 
 /* Dark mode theme */
 persian-datepicker-element[dark-mode] {
-    --jdp-background: #333333;
-    --jdp-foreground: #e0e0e0;
-    --jdp-border-color: #555;
-    --jdp-input-bg: #444;
-    --jdp-input-border: #555;
-    --jdp-nav-arrow-color: #e0e0e0;
-    --jdp-selected-bg: #0073aa;
-    --jdp-hover-bg: rgba(0, 115, 170, 0.2);
-    --jdp-today-border-color: #0073aa;
-    --jdp-input-focus-border: #0073aa;
-    --jdp-input-focus-shadow: 0 0 0 1px #0073aa;
+    --jdp-background: #1e1e2f;
+    --jdp-foreground: #e2e8f0;
+    --jdp-muted: #334155;
+    --jdp-muted-foreground: #94a3b8;
+    --jdp-border: #475569;
+    --jdp-day-hover-bg: #334155;
+    --jdp-input-border-color: #475569;
+    --jdp-input-bg: #1e1e2f;
+    --jdp-calendar-bg: #1e1e2f;
+    --jdp-holiday-bg: #3f1e2e;
+    --jdp-border-color: #475569;
+    --jdp-nav-arrow-color: #e2e8f0;
+    --jdp-selected-bg: #0891b2;
+    --jdp-hover-bg: rgba(8, 145, 178, 0.2);
+    --jdp-today-border-color: #0891b2;
+    --jdp-input-focus-border: #0891b2;
+    --jdp-input-focus-shadow: 0 0 0 1px #0891b2;
 }
 
 /* RTL support */
@@ -85,6 +91,13 @@ persian-datepicker-element[dark-mode] {
     --jdp-input-bg: #1e1e2f;
     --jdp-calendar-bg: #1e1e2f;
     --jdp-holiday-bg: #3f1e2e;
+    --jdp-border-color: #475569;
+    --jdp-nav-arrow-color: #e2e8f0;
+    --jdp-selected-bg: #0891b2;
+    --jdp-hover-bg: rgba(8, 145, 178, 0.2);
+    --jdp-today-border-color: #0891b2;
+    --jdp-input-focus-border: #0891b2;
+    --jdp-input-focus-shadow: 0 0 0 1px #0891b2;
 }
 
 /* WordPress Form Integration */

@@ -416,8 +416,16 @@ class WP_Persian_Datepicker_Admin {
                             if (isset($options['rtl'])) $attrs[] = 'rtl="' . (empty($options['rtl']) ? 'false' : 'true') . '"';
                             if (isset($options['dark_mode'])) $attrs[] = 'darkmode="' . (empty($options['dark_mode']) ? 'false' : 'true') . '"';
                             if (!empty($options['holiday_types'])) $attrs[] = 'holiday-types="' . esc_attr($options['holiday_types']) . '"';
-                            if (isset($options['range_mode'])) $attrs[] = 'range-mode="' . (empty($options['range_mode']) ? 'false' : 'true') . '"';
-                            
+
+                            // Special handling for range_mode to ensure it's always explicitly set
+                            // This is critical as web components need explicit boolean attributes
+                            $attrs[] = 'range-mode="' . (isset($options['range_mode']) && !empty($options['range_mode']) ? 'true' : 'false') . '"';
+
+                            // Debug output
+                            error_log('WP Persian Datepicker Admin: Setting range-mode attribute to: ' . 
+                                (isset($options['range_mode']) && !empty($options['range_mode']) ? 'true' : 'false') . 
+                                ' (option value: ' . (isset($options['range_mode']) ? $options['range_mode'] : 'not set') . ')');
+
                             $dark_class = !empty($options['dark_mode']) ? ' dark-theme' : '';
                             ?>
                             <div class="preview-datepicker<?php echo esc_attr($dark_class); ?>">

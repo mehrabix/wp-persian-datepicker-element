@@ -81,11 +81,11 @@
                     rangeMode: rangeMode
                 });
                 
-                // Create a new datepicker element to replace the old one
+                // Create a completely new datepicker element with all needed attributes
                 var newElement = document.createElement('persian-datepicker-element');
                 newElement.id = 'preview-datepicker';
                 
-                // Update attributes
+                // Set all attributes explicitly
                 if (placeholder) {
                     newElement.setAttribute('placeholder', placeholder);
                 }
@@ -102,12 +102,21 @@
                     newElement.setAttribute('holiday-types', holidayTypes);
                 }
                 
+                // Explicitly set range-mode as a string attribute
                 newElement.setAttribute('range-mode', rangeMode ? 'true' : 'false');
+                
+                console.log('Created new element with attributes:', {
+                    'show-holidays': newElement.getAttribute('show-holidays'),
+                    'rtl': newElement.getAttribute('rtl'),
+                    'darkmode': newElement.getAttribute('darkmode'),
+                    'holiday-types': newElement.getAttribute('holiday-types'),
+                    'range-mode': newElement.getAttribute('range-mode')
+                });
                 
                 // Replace the old element with the new one
                 $preview.replaceWith(newElement);
                 
-                // Handle special styles based on settings
+                // Update dark theme class on the container
                 var $previewContainer = $('.preview-datepicker');
                 if (darkMode) {
                     $previewContainer.addClass('dark-theme');
