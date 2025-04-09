@@ -1238,7 +1238,7 @@ function wp_persian_datepicker_israngemode_property_fix() {
                             picker.style.setProperty('--jdp-input-focus-border', '#2271b1');
                             picker.style.setProperty('--jdp-input-focus-shadow', '0 0 0 1px #2271b1');
                         }
-                        
+
                         // Try to access the internal darkMode property
                         if (picker.__proto__ && picker.__proto__.darkMode !== undefined) {
                             // For prototype-based property
@@ -1303,7 +1303,7 @@ function wp_persian_datepicker_israngemode_property_fix() {
                                         // Log what we're doing
                                         if (shouldEnableRangeMode) {
                                             console.log('New datepicker detected with range mode enabled');
-                                        } else {
+                                                } else {
                                             console.log('New datepicker detected with range mode disabled');
                                         }
                                         
@@ -1373,8 +1373,8 @@ function wp_persian_datepicker_israngemode_property_fix() {
                                         // Process each nested picker with a delay
                                         nestedPickers.forEach(function(nestedPicker) {
                                             var rangeMode = nestedPicker.getAttribute('range-mode');
-                                            var shouldEnableRangeMode = rangeMode === 'true' || rangeMode === '1' || rangeMode === true;
-                                            
+                                                var shouldEnableRangeMode = rangeMode === 'true' || rangeMode === '1' || rangeMode === true;
+                                                
                                             // Only enable range mode if explicitly requested
                                             if (shouldEnableRangeMode) {
                                                 setTimeout(function() {
@@ -1457,7 +1457,7 @@ function wp_persian_datepicker_direct_api_fix() {
             
             // Find all datepicker elements
             var datepickers = document.querySelectorAll('persian-datepicker-element');
-            
+          
             console.log('Found ' + datepickers.length + ' datepickers to apply direct API fixes');
             
             // Process each datepicker to apply direct API fixes
@@ -1466,9 +1466,9 @@ function wp_persian_datepicker_direct_api_fix() {
                     // Check if the component is fully initialized
                     if (!picker.shadowRoot || !picker.shadowRoot.querySelector('.datepicker-container')) {
                         console.log('Picker #' + index + ' is not fully initialized, skipping direct API fix');
-                        return;
-                    }
-                    
+                    return;
+                }
+                
                     // Apply direct API fixes depending on the internal structure
                     if (picker._datepicker || picker.datepicker) {
                         var instance = picker._datepicker || picker.datepicker;
@@ -1480,11 +1480,11 @@ function wp_persian_datepicker_direct_api_fix() {
                             instance.setDate = function() {
                                 try {
                                     return originalSetDate.apply(instance, arguments);
-                                } catch (e) {
+                            } catch (e) {
                                     console.error('Error in wrapped setDate method:', e);
-                                    return false;
-                                }
-                            };
+                                return false;
+                            }
+                        };
                             console.log('Wrapped setDate method on picker #' + index);
                         }
                         
@@ -1517,25 +1517,25 @@ function wp_persian_datepicker_direct_api_fix() {
             });
             
             // Also listen for any newly added datepickers
-            var observer = new MutationObserver(function(mutations) {
-                mutations.forEach(function(mutation) {
-                    mutation.addedNodes.forEach(function(node) {
+                var observer = new MutationObserver(function(mutations) {
+                    mutations.forEach(function(mutation) {
+                            mutation.addedNodes.forEach(function(node) {
                         if (node.nodeType === 1) { // Element nodes only
                             // Check if it's a datepicker element
-                            if (node.tagName && node.tagName.toLowerCase() === 'persian-datepicker-element') {
-                                console.log('New datepicker detected, applying direct API fix');
-                                setTimeout(function() {
-                                    try {
+                                if (node.tagName && node.tagName.toLowerCase() === 'persian-datepicker-element') {
+                                        console.log('New datepicker detected, applying direct API fix');
+                                        setTimeout(function() {
+                                            try {
                                         // Ensure the component is initialized
-                                        if (!node.shadowRoot || !node.shadowRoot.querySelector('.datepicker-container')) {
+                                                if (!node.shadowRoot || !node.shadowRoot.querySelector('.datepicker-container')) {
                                             console.log('New picker is not fully initialized, skipping direct API fix');
-                                            return;
-                                        }
-                                        
-                                        // Apply the same fixes as above
-                                        if (node._datepicker || node.datepicker) {
-                                            var instance = node._datepicker || node.datepicker;
-                                            
+                                                    return;
+                                                }
+                                                
+                                                // Apply the same fixes as above
+                                                if (node._datepicker || node.datepicker) {
+                                                    var instance = node._datepicker || node.datepicker;
+                                                    
                                             if (instance && typeof instance.setDate === 'function') {
                                                 var originalSetDate = instance.setDate;
                                                 instance.setDate = function() {
@@ -1566,24 +1566,24 @@ function wp_persian_datepicker_direct_api_fix() {
                                                     return node._datepicker || node.datepicker;
                                                 };
                                             }
-                                        }
-                                    } catch (e) {
-                                        console.error('Error applying direct API fix to new element:', e);
-                                    }
+                                                }
+                                            } catch (e) {
+                                                console.error('Error applying direct API fix to new element:', e);
+                                            }
                                 }, 300);
-                            }
+                                    }
                             
                             // Also check for nested datepickers
                             if (node.querySelectorAll) {
-                                var nestedPickers = node.querySelectorAll('persian-datepicker-element');
-                                if (nestedPickers.length > 0) {
-                                    console.log('Found nested datepickers in new content:', nestedPickers.length);
-                                    // Process each nested picker with a delay
-                                    nestedPickers.forEach(function(nestedPicker) {
-                                        setTimeout(function() {
-                                            try {
+                                    var nestedPickers = node.querySelectorAll('persian-datepicker-element');
+                                    if (nestedPickers.length > 0) {
+                                        console.log('Found nested datepickers in new content:', nestedPickers.length);
+                                        // Process each nested picker with a delay
+                                        nestedPickers.forEach(function(nestedPicker) {
+                                                setTimeout(function() {
+                                                    try {
                                                 // Same fixes as above for nested pickers
-                                                if (nestedPicker._datepicker || nestedPicker.datepicker) {
+                                                        if (nestedPicker._datepicker || nestedPicker.datepicker) {
                                                     var instance = nestedPicker._datepicker || nestedPicker.datepicker;
                                                     
                                                     if (instance && typeof instance.setDate === 'function') {
@@ -1616,23 +1616,23 @@ function wp_persian_datepicker_direct_api_fix() {
                                                             return nestedPicker._datepicker || nestedPicker.datepicker;
                                                         };
                                                     }
-                                                }
-                                            } catch (e) {
-                                                console.error('Error applying direct API fix to nested element:', e);
-                                            }
+                                                        }
+                                                    } catch (e) {
+                                                        console.error('Error applying direct API fix to nested element:', e);
+                                                    }
                                         }, 400);
-                                    });
+                                        });
+                                    }
                                 }
-                            }
                         }
                     });
+                    });
                 });
-            });
-            
+                
             // Start observing the entire document
-            observer.observe(document.body, { childList: true, subtree: true });
-            console.log('MutationObserver set up for direct API fix');
-            
+                observer.observe(document.body, { childList: true, subtree: true });
+                console.log('MutationObserver set up for direct API fix');
+                
         }, 2000); // Delay to ensure components are loaded
     });
     </script>
